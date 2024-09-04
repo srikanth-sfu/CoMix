@@ -1,3 +1,6 @@
+"""
+python extract_bg_tmf_jester.py -i ../video_splits/jester_target_train.csv --input_dir ../../20bn-jester-v1.zip --output_dir ../../jester_BG/ -r 224 -offset 1
+"""
 from __future__ import print_function
 
 import argparse
