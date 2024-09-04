@@ -8,6 +8,7 @@ from torch.autograd import Variable
 from models import *
 import torchvision
 import params
+import zipfile
 
 
 def print_line():
@@ -61,3 +62,43 @@ def save_model(net, filename):
                os.path.join(params.model_root, filename))
     print("save pretrained model to: {}".format(
         os.path.join(params.model_root, filename)))
+
+
+class SrcFiles:
+    def __init__(self, type, value):
+        self.type = type
+        self.value = value
+        self.paths = None
+
+def select_folders_to_zip(src:SrcFiles, dst: str):
+    if src.type == "list":
+        pass
+    elif src.type == "zip":
+        ver_exp = file in src.value.namelist()
+    with zipfile.ZipFile(dst, 'w') as output:
+        for file in src.paths:
+            # Check if the file exists in the original zip
+            if ver_exp:
+                # Extract the file to a temporary location
+                if src.type == "zip":
+                    extracted_path = src.value.extract(file)
+                # Add the extracted file to the new zip
+                output.write(extracted_path, arcname=file)
+                # Remove the extracted file
+                if src.type == "zip":
+                    os.remove(extracted_path)
+            else:
+                print("Entry not found")
+    
+def select_folders_zip(src_zip_filename: str, tgt_filename: str, path: str=None):
+    zip_f = zipfile.ZipFile(src_zip_filename, 'r')
+    src = SrcFiles("zip", zip_f)
+    src.paths = path
+    import ipdb; ipdb.set_trace()
+    select_folders_to_zip(src,tgt_filename)
+
+if __name__ == "__main__":
+    fn = "ucf_hmdb.zip"
+    src_env = "%s/%s"%(os.getenv('SLURM_TMPDIR'), fn)
+    dst = "ucf_modified.zip"
+    select_folders_zip(src_env, dst)
