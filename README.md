@@ -101,7 +101,7 @@ For using datasets stored in some other directories, please pass the parameter `
 
 ### Background Extraction using Temporal Median Filtering
 
-Please refer to the folder `./background_extraction` for the codes to extract backgrounds using temporal median filtering.
+Please refer to the folder `./background_extraction` for the codes to extract backgrounds using temporal median filtering
 
 
 ### Data
