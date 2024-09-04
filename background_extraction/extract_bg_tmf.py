@@ -143,35 +143,36 @@ def progress(count, total, suffix=''):
     sys.stdout.flush()
 
 
-def temporal_median_filter_multi2(input_data, output_dir, limit_frames, output_format, frame_offset=8, resize=None, input_dir=None):
+def temporal_median_filter_multi2(in_args, input_dir=None):
+    input_data, output_dir, limit_frames, output_format, frame_offset, resize = in_args
+    print("Input path : ", input_data)
     start2 = timer()
     frame_path = make_output_dir(output_dir, input_dir)
     width, height = do_sizing(input_data)
     total_frames = get_frame_limit(limit_frames, get_number_of_frames(input_data))
-    print("Total frames : ", total_frames)
     allRange = np.arange(total_frames)
     splitRange = np.array_split(allRange, frame_offset)
 
     slice_list = []
-    if resize : 
+    if resize :
         filtered_array = numpy.zeros((len(splitRange), resize, resize, 3), numpy.uint8)
     else :
         filtered_array = numpy.zeros((len(splitRange), height, width, 3), numpy.uint8)
 
-    for chunks in splitRange : 
-        if resize : 
+    for chunks in splitRange :
+        if resize :
             median_array = numpy.zeros((len(chunks), resize, resize, 3), numpy.uint8)
         else :
             median_array = numpy.zeros((len(chunks), height, width, 3), numpy.uint8)
         ind = 0
         for frame_number in chunks :
             next_im = get_frame_data(input_data, frame_number)
-            if resize : 
+            if resize :
                 next_im = next_im.resize((resize, resize))
             next_array = numpy.array(next_im, numpy.uint8)
             del next_im
             median_array[ind, :, :, :] = next_array
-            ind += 1   
+            ind += 1
         slice_list.append(median_array)
     results = [median_calc(slice_list[0])]
     for frame in range(len(results)):
@@ -222,19 +223,18 @@ if __name__ == '__main__':
     if not args.output_dir.endswith("/"):
         args.output_dir += "/"
 
-    print(len(dataset_csv))
+    all_inputs = []
     for idx in range(len(dataset_csv)):
         path = args.input_dir + dataset_csv.iloc[idx, 0]
-        output_dir = args.output_dir + dataset_csv.iloc[idx, 0] 
-        print("------------------------------------------------------------------")
-        print("Input path : ", path)
-        print("Output path : ", output_dir)
+        output_dir = args.output_dir + dataset_csv.iloc[idx, 0]
 
-        output_path = temporal_median_filter_multi2(
-            make_a_glob(path),
+        in_args = (make_a_glob(path),
             output_dir,
             args.frame_limit,
             args.output_format,
             args.frame_offset,
-            args.resize, 
-        )
+            args.resize,)
+        all_inputs.append(in_args)
+    from multiprocessing import Pool
+    pool = Pool(64)
+    pool.map(temporal_median_filter_multi2, all_inputs)
