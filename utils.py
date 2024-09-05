@@ -81,7 +81,7 @@ def select_folders_to_zip(src:SrcFiles, dst: str):
             if ver_exp:
                 # Extract the file to a temporary location
                 if src.type == "zip":
-                    extracted_path = src.value.extract(file)
+                    extracted_path = src.value.extractall(file)
                 # Add the extracted file to the new zip
                 output.write(extracted_path, arcname=file)
                 # Remove the extracted file
@@ -102,4 +102,4 @@ if __name__ == "__main__":
     fn = "ucf_hmdb.zip"
     src_env = "%s/%s"%(os.getenv('SLURM_TMPDIR'), fn)
     dst = "ucf_modified.zip"
-    select_folders_zip(src_env, dst, path="ucf_BG", path_tgt="ucf_modified")
+    select_folders_zip(src_env, dst, path="ucf_BG", path_tgt="ucf_videos")
