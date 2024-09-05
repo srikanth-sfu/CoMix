@@ -71,13 +71,11 @@ class SrcFiles:
         self.paths = None
 
 def select_folders_to_zip(src:SrcFiles, dst: str):
-    if src.type == "list":
-        pass
-    elif src.type == "zip":
-        ver_exp = file in src.value.namelist()
     with zipfile.ZipFile(dst, 'w') as output:
         for file in src.paths:
             # Check if the file exists in the original zip
+            if src.type == "zip":
+                ver_exp = file in src.value.namelist()
             if ver_exp:
                 # Extract the file to a temporary location
                 if src.type == "zip":
