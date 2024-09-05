@@ -103,4 +103,4 @@ if __name__ == "__main__":
     fn = "ucf_hmdb.zip"
     src_env = "%s/%s"%(os.getenv('SLURM_TMPDIR'), fn)
     dst = "ucf_modified.zip"
-    select_folders_zip(src_env, dst, path="UCF_BG", path_tgt="ucf_modified")
+    select_folders_zip(src_env, dst, path="ucf_BG", path_tgt="ucf_modified")
