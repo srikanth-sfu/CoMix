@@ -68,7 +68,7 @@ class SrcFiles:
     def __init__(self, type, value):
         self.type = type
         self.value = value
-        self.paths = None
+        self.paths = []
 
 def select_folders_to_zip(src:SrcFiles, dst: str):
     with zipfile.ZipFile(dst, 'w') as output:
@@ -96,8 +96,10 @@ def select_folders_zip(src_zip_filename: str, tgt_filename: str, path: str=None,
     paths = ['%s/%s'%(path_tgt, os.path.basename(os.path.dirname(file))) for file in all_files if file.startswith(path)]
     def get_paths(x):
         return [y for y in all_files if y.startswith('path') and not y[-1] == "/"]
-    pool = Pool(32)
-    src.paths = pool.map(get_paths, paths)
+    #pool = Pool(32)
+    #src.paths = pool.map(get_paths, paths)
+    for path in paths:
+        src.paths.append(get_paths(path))
     import ipdb; ipdb.set_trace()
     select_folders_to_zip(src,tgt_filename)
 
