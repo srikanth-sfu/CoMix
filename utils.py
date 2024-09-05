@@ -83,6 +83,9 @@ def select_folders_to_zip(src:SrcFiles, dst: str):
             if ver_exp:
                 # Extract the file to a temporary location
                 # Add the extracted file to the new zip
+                fn = os.path.basename(file)
+                import ipdb; ipdb.set_trace()
+                os.system(f"zip -r {fn}.zip {file}")
                 if fileid % update_freq == 1:
                     print(f"Writing {fileid}:{file}")
                 output.write(file, arcname=file)
@@ -99,8 +102,7 @@ def select_folders_zip(src_zip_filename: str, tgt_filename: str, paths: Set):
     all_files = src.value.namelist()
     #pool = Pool(32)
     #src.paths = pool.map(get_paths, paths)
-    all_files = [x for x in all_files if x[-1] != "/"] 
-    all_files = [x for x in all_files[:100000] if os.path.basename(os.path.dirname(x)) in paths]
+    all_files = [os.path.join(os.path.basename(src_zip_filename).split('.')[0], x) for x in paths] 
     src.paths = all_files
     select_folders_to_zip(src,tgt_filename)
 
