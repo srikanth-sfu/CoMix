@@ -76,6 +76,7 @@ def select_folders_to_zip(src:SrcFiles, dst: str):
         num_files = len(src.paths)
         update_freq = 1
         print(f"Writing total of {num_files} files")
+        import ipdb; ipdb.set_trace()
         for fileid, file in enumerate(src.paths):
             # Check if the file exists in the original zip
             # Extract the file to a temporary location
