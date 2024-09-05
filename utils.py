@@ -10,6 +10,7 @@ import torchvision
 import params
 import zipfile
 from typing import Set
+import glob
 
 
 def print_line():
@@ -72,22 +73,17 @@ class SrcFiles:
         self.paths = []
 
 def select_folders_to_zip(src:SrcFiles, dst: str):
-    with zipfile.ZipFile(dst, 'w') as output:
-        num_files = len(src.paths)
-        update_freq = 1
-        print(f"Writing total of {num_files} files")
-        for fileid, file in enumerate(src.paths):
-            # Check if the file exists in the original zip
-            # Extract the file to a temporary location
-            # Add the extracted file to the new zip
-            fn = os.path.basename(file)
-            os.system(f"zip -qq -r {fn}.zip {file}")
-            if fileid % update_freq == 0:
-                print(f"Writing {fileid}:{file}")
-            output.write(f"{fn}.zip", arcname=file)
-            # Remove the extracted file
-            os.system(f"rm {fn}.zip")
-
+    num_files = len(src.paths)
+    update_freq = 1
+    files = []
+    for fileid, file in enumerate(src.paths):
+        # Check if the file exists in the original zip
+        # Extract the file to a temporary location
+        # Add the extracted file to the new zip
+        fn = os.path.basename(file)
+        files.extend(glob.glob(f"{file}/*"))
+    with open("filelist.txt", "w") as f:
+        f.write("\n".join(files))
     
 def select_folders_zip(src_zip_filename: str, tgt_filename: str, paths: Set):
     from multiprocessing import Pool
