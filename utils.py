@@ -100,7 +100,7 @@ def select_folders_zip(src_zip_filename: str, tgt_filename: str, path: str=None,
     #src.paths = pool.map(get_paths, paths)
     for path in paths:
         src.paths.append(get_paths(path))
-    import ipdb; ipdb.set_trace()
+        import ipdb; ipdb.set_trace()
     select_folders_to_zip(src,tgt_filename)
 
 if __name__ == "__main__":
