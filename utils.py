@@ -94,7 +94,7 @@ def select_folders_zip(src_zip_filename: str, tgt_filename: str, path: str=None,
     all_files = src.value.namelist()
     paths = ['%s/%s'%(path_tgt, os.path.basename(os.path.dirname(file))) for file in all_files if file.startswith(path)]
     for path in paths:
-        src.paths = [x for x in all_files if x.startswith(path)]
+        src.paths = [x for x in all_files if x.startswith(path) and not x[-1] == "/"]
         import ipdb; ipdb.set_trace()
         select_folders_to_zip(src,tgt_filename)
 
