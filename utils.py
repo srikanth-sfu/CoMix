@@ -89,7 +89,7 @@ def select_folders_zip(src_zip_filename: str, tgt_filename: str, paths: Set):
     zip_f = zipfile.ZipFile(src_zip_filename, 'r')
     src = SrcFiles("zip", zip_f)
     all_files = src.value.namelist()
-    folder_root = src_list[0]
+    folder_root = all_files[0]
     #pool = Pool(32)
     #src.paths = pool.map(get_paths, paths)
     all_files = [os.path.join(folder_root, x) for x in paths] 
