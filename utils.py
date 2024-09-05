@@ -96,16 +96,15 @@ def select_folders_zip(src_zip_filename: str, tgt_filename: str, paths: Set):
     all_files = src.value.namelist()
     #pool = Pool(32)
     #src.paths = pool.map(get_paths, paths)
-    all_files = [x for x in all_files if '/'.join(os.path.dirname(x).split('/')[1:]) in paths]
     import ipdb; ipdb.set_trace()
+    all_files = [x for x in all_files if '/'.join(os.path.dirname(x).split('/')[1:]) in paths]
     select_folders_to_zip(src,tgt_filename)
 
 if __name__ == "__main__":
     root = "%s"%(os.getenv('SLURM_TMPDIR'))
     src_list = zipfile.ZipFile(f"{root}/ucf_BG.zip", 'r').namelist()
     src_list = set([os.path.basename(x[:-1])+'/' for x in src_list if x[-1] == "/" and x != "ucf_BG/"])
-    
     src_list = [os.path.basename(x) for x in src_list]
     tgt_zip = f"{root}/ucf_videos.zip"
     dst = "ucf_modified.zip"
-    select_folders_zip(tgt_zip, dst, path=src_list)
+    select_folders_zip(tgt_zip, dst, paths=src_list)
