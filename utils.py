@@ -9,6 +9,7 @@ from models import *
 import torchvision
 import params
 import zipfile
+from typing import Set
 
 
 def print_line():
@@ -88,23 +89,21 @@ def select_folders_to_zip(src:SrcFiles, dst: str):
             else:
                 print("Entry not found")
     
-def select_folders_zip(src_zip_filename: str, tgt_filename: str, path: str=None, path_tgt: str=None):
+def select_folders_zip(src_zip_filename: str, tgt_filename: str, paths: Set):
     from multiprocessing import Pool
     zip_f = zipfile.ZipFile(src_zip_filename, 'r')
     src = SrcFiles("zip", zip_f)
     all_files = src.value.namelist()
-    paths = ['%s/%s'%(path_tgt, os.path.basename(os.path.dirname(file))) for file in all_files if file.startswith(path)]
-    def get_paths(x):
-        return [y for y in all_files if y.startswith('path') and not y[-1] == "/"]
     #pool = Pool(32)
     #src.paths = pool.map(get_paths, paths)
-    for path in paths:
-        src.paths.append(get_paths(path))
-        import ipdb; ipdb.set_trace()
+    all_files = [x for x in all_files if '/'.join(os.path.dirname(x).split('/')[1:]) in paths]
+    import ipdb; ipdb.set_trace()
     select_folders_to_zip(src,tgt_filename)
 
 if __name__ == "__main__":
-    fn = "ucf_hmdb.zip"
-    src_env = "%s/%s"%(os.getenv('SLURM_TMPDIR'), fn)
+    root = "%s/%s"%(os.getenv('SLURM_TMPDIR'), fn)
+    src_list = zipfile.ZipFile(f"{root}/ucf_BG.zip", 'r').namelist()
+    src_list = set([os.path.basename(x) for x in src_list if x[-1] == "/" and x != "ucf_BG/"])
+    tgt_zip = f"{root}/ucf_videos.zip"
     dst = "ucf_modified.zip"
-    select_folders_zip(src_env, dst, path="ucf_BG", path_tgt="ucf_videos")
+    select_folders_zip(tgt_zip, dst, path=src_list)
