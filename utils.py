@@ -89,9 +89,10 @@ def select_folders_zip(src_zip_filename: str, tgt_filename: str, paths: Set):
     zip_f = zipfile.ZipFile(src_zip_filename, 'r')
     src = SrcFiles("zip", zip_f)
     all_files = src.value.namelist()
+    folder_root = src_list[0]
     #pool = Pool(32)
     #src.paths = pool.map(get_paths, paths)
-    all_files = [os.path.join(os.path.basename(src_zip_filename).split('.')[0], x) for x in paths] 
+    all_files = [os.path.join(folder_root, x) for x in paths] 
     src.paths = all_files
     select_folders_to_zip(src,tgt_filename)
 
