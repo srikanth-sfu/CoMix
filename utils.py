@@ -103,8 +103,7 @@ def select_folders_zip(src_zip_filename: str, tgt_filename: str, paths: Set):
 if __name__ == "__main__":
     root = "%s"%(os.getenv('SLURM_TMPDIR'))
     src_list = zipfile.ZipFile(f"{root}/ucf_BG.zip", 'r').namelist()
-    src_list = set([x for x in src_list if x[-1] == "/" and x != "ucf_BG/"])
-    import ipdb; ipdb.set_trace()
+    src_list = set([os.path.basename(x)[:-1]+'/' for x in src_list if x[-1] == "/" and x != "ucf_BG/"])
     
     src_list = [os.path.basename(x) for x in src_list]
     tgt_zip = f"{root}/ucf_videos.zip"
