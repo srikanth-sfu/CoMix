@@ -73,6 +73,9 @@ class SrcFiles:
 
 def select_folders_to_zip(src:SrcFiles, dst: str):
     with zipfile.ZipFile(dst, 'w') as output:
+        num_files = len(src.paths)
+        update_freq = 1000
+        print(f"Writing total of {num_files} files")
         for fileid, file in enumerate(src.paths):
             # Check if the file exists in the original zip
             if src.type == "zip":
@@ -82,7 +85,8 @@ def select_folders_to_zip(src:SrcFiles, dst: str):
                 if src.type == "zip":
                     extracted_path = src.value.extract(file)
                 # Add the extracted file to the new zip
-                print(f"Writing {fileid}{file}")
+                if fileid % update_freq == 1:
+                    print(f"Writing {fileid}{file}")
                 output.write(extracted_path, arcname=file)
                 # Remove the extracted file
                 if src.type == "zip":
