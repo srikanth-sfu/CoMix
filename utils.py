@@ -77,13 +77,10 @@ def select_folders_to_zip(src:SrcFiles, dst: str):
     update_freq = 1
     files = []
     for fileid, file in enumerate(src.paths):
-        # Check if the file exists in the original zip
-        # Extract the file to a temporary location
-        # Add the extracted file to the new zip
-        fn = os.path.basename(file)
         files.extend(glob.glob(f"{file}/*"))
     with open("filelist.txt", "w") as f:
         f.write("\n".join(files))
+    os.system(f"zip -qq {dst} -@ < filelist.txt")
     
 def select_folders_zip(src_zip_filename: str, tgt_filename: str, paths: Set):
     from multiprocessing import Pool
