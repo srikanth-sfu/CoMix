@@ -82,9 +82,8 @@ def select_folders_to_zip(src:SrcFiles, dst: str):
             # Extract the file to a temporary location
             # Add the extracted file to the new zip
             fn = os.path.basename(file)
-            import ipdb; ipdb.set_trace()
-            os.system(f"zip -r {fn}.zip {file}")
-            if fileid % update_freq == 1:
+            os.system(f"zip -qq -r {fn}.zip {file}")
+            if fileid % update_freq == 0:
                 print(f"Writing {fileid}:{file}")
             output.write(f"{fn}.zip", arcname=file)
             # Remove the extracted file
