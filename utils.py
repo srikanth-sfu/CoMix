@@ -90,10 +90,11 @@ def select_folders_to_zip(src:SrcFiles, dst: str):
             else:
                 print("Entry not found")
     
-def select_folders_zip(src_zip_filename: str, tgt_filename: str, path: str=None):
+def select_folders_zip(src_zip_filename: str, tgt_filename: str, path: str=None, path_tgt: str=None):
     zip_f = zipfile.ZipFile(src_zip_filename, 'r')
     src = SrcFiles("zip", zip_f)
-    src.paths = path
+    all_files = src.value.namelist()
+    src.paths = ['%s/%s'%(path_tgt, os.path.basename(file)) for file in all_files if file.startswith(path)]
     import ipdb; ipdb.set_trace()
     select_folders_to_zip(src,tgt_filename)
 
