@@ -78,22 +78,17 @@ def select_folders_to_zip(src:SrcFiles, dst: str):
         print(f"Writing total of {num_files} files")
         for fileid, file in enumerate(src.paths):
             # Check if the file exists in the original zip
+            # Extract the file to a temporary location
+            # Add the extracted file to the new zip
+            fn = os.path.basename(file)
+            import ipdb; ipdb.set_trace()
+            os.system(f"zip -r {fn}.zip {file}")
+            if fileid % update_freq == 1:
+                print(f"Writing {fileid}:{file}")
+            output.write(f"{fn}.zip", arcname=file)
+            # Remove the extracted file
             if src.type == "zip":
-                ver_exp = file in src.value.namelist()
-            if ver_exp:
-                # Extract the file to a temporary location
-                # Add the extracted file to the new zip
-                fn = os.path.basename(file)
-                import ipdb; ipdb.set_trace()
-                os.system(f"zip -r {fn}.zip {file}")
-                if fileid % update_freq == 1:
-                    print(f"Writing {fileid}:{file}")
-                output.write(f"{fn}.zip", arcname=file)
-                # Remove the extracted file
-                if src.type == "zip":
-                    os.remove(extracted_path)
-            else:
-                print("Entry not found")
+                os.remove(extracted_path)
     
 def select_folders_zip(src_zip_filename: str, tgt_filename: str, paths: Set):
     from multiprocessing import Pool
