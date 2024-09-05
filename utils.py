@@ -86,8 +86,8 @@ def select_folders_to_zip(src:SrcFiles, dst: str):
                 print(f"Writing {fileid}:{file}")
             output.write(f"{fn}.zip", arcname=file)
             # Remove the extracted file
-            if src.type == "zip":
-                os.remove(extracted_path)
+            os.system(f"rm {fn}.zip")
+
     
 def select_folders_zip(src_zip_filename: str, tgt_filename: str, paths: Set):
     from multiprocessing import Pool
