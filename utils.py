@@ -76,6 +76,7 @@ def select_folders_to_zip(src:SrcFiles, dst: str):
     num_files = len(src.paths)
     update_freq = 1
     files = []
+    print(f"Total of {num_files} videos")
     for fileid, file in enumerate(src.paths):
         files.extend(glob.glob(f"{file}/*"))
     with open("filelist.txt", "w") as f:
