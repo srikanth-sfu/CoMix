@@ -86,7 +86,7 @@ def select_folders_to_zip(src:SrcFiles, dst: str):
                     extracted_path = src.value.extract(file)
                 # Add the extracted file to the new zip
                 if fileid % update_freq == 1:
-                    print(f"Writing {fileid}{file}")
+                    print(f"Writing {fileid}:{file}")
                 output.write(extracted_path, arcname=file)
                 # Remove the extracted file
                 if src.type == "zip":
