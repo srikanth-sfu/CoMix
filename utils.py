@@ -73,6 +73,8 @@ class SrcFiles:
         self.paths = []
 
 def select_folders_to_zip(src:SrcFiles, dst: str):
+    # src: contains zipfile obj under value field and paths to copy from it under paths field
+    # dst: destination zipfile to copy paths
     num_files = len(src.paths)
     update_freq = 1
     files = []
@@ -85,18 +87,19 @@ def select_folders_to_zip(src:SrcFiles, dst: str):
     os.system(f"zip -qq {dst} -@ < filelist.txt")
     
 def select_folders_zip(src_zip_filename: str, tgt_filename: str, paths: Set):
-    from multiprocessing import Pool
+    # paths: set of folder names (video frame folders) to copy
+    # src_zip_filename: zipped dataset frame folders
+    # tgt_filename: zip file where frame folders are stored
     zip_f = zipfile.ZipFile(src_zip_filename, 'r')
     src = SrcFiles("zip", zip_f)
     all_files = src.value.namelist()
     folder_root = all_files[0]
-    #pool = Pool(32)
-    #src.paths = pool.map(get_paths, paths)
     all_files = [os.path.join(folder_root, x) for x in paths] 
     src.paths = all_files
     select_folders_to_zip(src,tgt_filename)
 
 if __name__ == "__main__":
+    # Load dataset only part of domain adaptation sub-component. BG folder list used in this case 
     root = "%s"%(os.getenv('SLURM_TMPDIR'))
     bg_file = "ucf_BG.zip"
     bg_file_no_ext = bg_file.split(".")[0]
