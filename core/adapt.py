@@ -445,9 +445,6 @@ def warmstart_models(graph_model, i3d_online, src_data_loader, tgt_data_loader=N
         best_accuracy_yet = 0.0
         best_itrn = 0
 
-    import ipdb; ipdb.set_trace()
-
-
     criterion = nn.CrossEntropyLoss().cuda()
 
     len_source_data_loader = len(src_data_loader) - 1 
