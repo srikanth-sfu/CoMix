@@ -124,7 +124,17 @@ def train_comix(graph_model, src_data_loader, tgt_data_loader=None, data_loader_
     if params.warmstart_models=='True': #changes needed for i3d online version
         if params.warmstart_graph=='None' or params.warmstart_i3d=='None':
             print('Starting Training for Warmstarting...')
-            graph_model, i3d_online = warmstart_models(graph_model, i3d_online, src_data_loader, None, data_loader_eval, params.num_iter_warmstart)            
+            checkpoint_path_warmstart = os.path.join(params.warmstart_graph_checkpoint, "Current-Checkpoint.pt")
+            if os.path.exists(checkpoint_path_warmstart):
+                checkpoint_warmstart = torch.load(checkpoint_path_warmstart)
+                start_iter_warmstart = checkpoint_warmstart["iter"]
+                epoch_number_warmstart = checkpoint_warmstart["epoch_number"]
+                graph_model.load_state_dict(checkpoint_warmstart["graph"])
+                i3d_online.load_state_dict(checkpoint_warmstart["i3d"])
+                print("Resuming warmstart from itrn: ", start_iter_warmstart) 
+            else:
+                start_iter_warmstart, epoch_number_warmstart, checkpoint_warmstart = 0, 0, None   
+            graph_model, i3d_online = warmstart_models(graph_model, i3d_online, src_data_loader, None, data_loader_eval, start_iter_warmstart, epoch_number_warmstart, checkpoint_warmstart)            
             print('Warmstarted successfully...')
         else:
             print('Warmstarting...')
@@ -366,7 +376,7 @@ def train_comix(graph_model, src_data_loader, tgt_data_loader=None, data_loader_
                         'optimizer':optimizer.state_dict(),
                         'scheduler':scheduler.state_dict(),
                         'best_accuracy_yet':best_accuracy_yet,
-                        'best_itrn':best_itrn
+                        'best_itrn':best_itrn,
                         },checkpoint_path_current)
 
             if(best_accuracy_yet <= avg_acc_val):
@@ -413,7 +423,7 @@ def train_comix(graph_model, src_data_loader, tgt_data_loader=None, data_loader_
 
 
 
-def warmstart_models(graph_model, i3d_online, src_data_loader, tgt_data_loader=None, data_loader_eval=None, num_iterations=10000):
+def warmstart_models(graph_model, i3d_online, src_data_loader, tgt_data_loader=None, data_loader_eval=None, num_iterations=10000, start_iter=0, epoch_number=0, checkpoint=None):
     # Trainer function
     
     optimizer = optim.SGD([ {"params": i3d_online.parameters(), "lr": params.learning_rate_ws * 0.1},
@@ -421,8 +431,20 @@ def warmstart_models(graph_model, i3d_online, src_data_loader, tgt_data_loader=N
                             lr=params.learning_rate,
                             weight_decay=0.0000001,
                             momentum=params.momentum )
-
+    
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, float(num_iterations))
+
+    if start_iter != 0:
+        optimizer.load_state_dict(checkpoint["optimizer"])
+        scheduler.load_state_dict(checkpoint["scheduler"])
+        best_accuracy_yet = checkpoint["best_accuracy_yet"]
+        best_itrn = checkpoint["best_itrn"]
+    else:
+        best_accuracy_yet = 0.0
+        best_itrn = 0
+
+    import ipdb; ipdb.set_trace()
+
 
     criterion = nn.CrossEntropyLoss().cuda()
 
@@ -431,8 +453,7 @@ def warmstart_models(graph_model, i3d_online, src_data_loader, tgt_data_loader=N
     print_line()
     print('len_source_data_loader = '+ str(len_source_data_loader))
 
-    best_accuracy_yet = 0.0
-    best_itrn = 0
+
     best_model_wts = copy.deepcopy(graph_model.state_dict())
     best_i3d_model_wts = copy.deepcopy(i3d_online.state_dict())
 
@@ -442,8 +463,7 @@ def warmstart_models(graph_model, i3d_online, src_data_loader, tgt_data_loader=N
 
     start_time = time.process_time()
     running_lr = params.learning_rate
-    epoch_number = 0
-    start_iter = 0
+
     if params.dataset_name=="UCF-HMDB":
         num_classes = 12
     elif params.dataset_name=="Jester":
@@ -547,6 +567,18 @@ def warmstart_models(graph_model, i3d_online, src_data_loader, tgt_data_loader=N
             avg_loss_val = loss_val / len(data_loader_eval)
             avg_acc_val = float(acc_val.cpu().numpy()) / len(data_loader_eval.dataset)
 
+            checkpoint_path_current = os.path.join(params.warmstart_graph_checkpoint, "Current-Checkpoint.pt")
+            torch.save({
+                        'iter':itrn+1,
+                        'epoch_number':epoch_number,
+                        'graph':graph_model.state_dict(),
+                        'i3d':i3d_online.state_dict(),
+                        'optimizer':optimizer.state_dict(),
+                        'scheduler':scheduler.state_dict(),
+                        'best_accuracy_yet':best_accuracy_yet,
+                        'best_itrn':best_itrn
+                        },checkpoint_path_current)
+            
             if(best_accuracy_yet <= avg_acc_val):
                 best_accuracy_yet = avg_acc_val
                 best_model_wts = copy.deepcopy(graph_model.state_dict())

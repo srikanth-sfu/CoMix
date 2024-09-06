@@ -26,6 +26,7 @@ parser.add_argument('--warmstart_models', type=str, default='True', help='Whethe
 parser.add_argument('--pseudo_threshold', type=float, default=0.7, help='Threshold value for TPL.')
 parser.add_argument('--manual_seed', type=int, default=1, help='Seed for Random Initialization.')
 parser.add_argument('--warmstart_graph', type=str, default='None', help='Load checkpoints from.')
+parser.add_argument('--warmstart_graph_checkpoint', type=str, default='./warmstart_checkpoints', help='Load warmstart checkpoints from.')
 parser.add_argument('--lambda_tpl', type=float, default=0.01, help='Coefficient to multiply the TPL loss.')
 parser.add_argument('--Temperature', type=float, default=0.5, help='Temperature for the SimCLR loss.')
 parser.add_argument('--warmstart_i3d', type=str, default='None', help='Warmstart i3d from.')
@@ -59,6 +60,7 @@ if __name__ == '__main__':
     params.pseudo_threshold = args.pseudo_threshold
     params.manual_seed = args.manual_seed
     params.warmstart_graph = args.warmstart_graph
+    params.warmstart_graph_checkpoint = args.warmstart_graph_checkpoint
     params.lambda_tpl = args.lambda_tpl
     params.Temperature = args.Temperature
     params.warmstart_i3d = args.warmstart_i3d
