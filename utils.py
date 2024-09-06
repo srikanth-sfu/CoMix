@@ -98,7 +98,8 @@ def select_folders_zip(src_zip_filename: str, tgt_filename: str, paths: Set):
     src.paths = all_files
     select_folders_to_zip(src,tgt_filename)
 
-if __name__ == "__main__":
+
+def main_select_folders():
     # Load dataset only part of domain adaptation sub-component. BG folder list used in this case 
     root = "%s"%(os.getenv('SLURM_TMPDIR'))
     bg_file = "ucf_BG.zip"
