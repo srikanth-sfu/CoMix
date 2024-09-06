@@ -135,7 +135,7 @@ def train_comix(graph_model, src_data_loader, tgt_data_loader=None, data_loader_
                 print("Resuming warmstart from itrn: ", start_iter_warmstart) 
             else:
                 start_iter_warmstart, epoch_number_warmstart, checkpoint_warmstart = 0, 0, None
-                os.makedirs(checkpoint_path_warmstart, exist_ok=True)
+                os.makedirs(os.path.dirname(checkpoint_path_warmstart), exist_ok=True)
             graph_model, i3d_online = warmstart_models(graph_model, i3d_online, src_data_loader, None, data_loader_eval, start_iter_warmstart, epoch_number_warmstart, checkpoint_warmstart)            
             print('Warmstarted successfully...')
         else:
