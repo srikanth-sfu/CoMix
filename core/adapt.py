@@ -126,6 +126,7 @@ def train_comix(graph_model, src_data_loader, tgt_data_loader=None, data_loader_
             print('Starting Training for Warmstarting...')
             checkpoint_path_warmstart = os.path.join(params.warmstart_graph_checkpoint, "Current-Checkpoint.pt")
             if os.path.exists(checkpoint_path_warmstart):
+                print("Loading warmstart checkpoint")
                 checkpoint_warmstart = torch.load(checkpoint_path_warmstart)
                 start_iter_warmstart = checkpoint_warmstart["iter"]
                 epoch_number_warmstart = checkpoint_warmstart["epoch_number"]
@@ -133,7 +134,8 @@ def train_comix(graph_model, src_data_loader, tgt_data_loader=None, data_loader_
                 i3d_online.load_state_dict(checkpoint_warmstart["i3d"])
                 print("Resuming warmstart from itrn: ", start_iter_warmstart) 
             else:
-                start_iter_warmstart, epoch_number_warmstart, checkpoint_warmstart = 0, 0, None   
+                start_iter_warmstart, epoch_number_warmstart, checkpoint_warmstart = 0, 0, None
+                os.makedirs(checkpoint_path_warmstart, exist_ok=True)
             graph_model, i3d_online = warmstart_models(graph_model, i3d_online, src_data_loader, None, data_loader_eval, start_iter_warmstart, epoch_number_warmstart, checkpoint_warmstart)            
             print('Warmstarted successfully...')
         else:
