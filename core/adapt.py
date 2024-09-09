@@ -587,6 +587,7 @@ def warmstart_models(graph_model, i3d_online, src_data_loader, tgt_data_loader=N
                         'best_accuracy_yet':best_accuracy_yet,
                         'best_itrn':best_itrn
                         },checkpoint_path_current)
+            print("save current warmstart checkpoint to: {}".format(os.path.join(params.model_root, checkpoint_path_current)))
 
             print('best_acc_yet: ', best_accuracy_yet, ' ( in itrn:', best_itrn, ')...')
             graph_model.train()
