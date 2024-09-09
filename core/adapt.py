@@ -565,7 +565,17 @@ def warmstart_models(graph_model, i3d_online, src_data_loader, tgt_data_loader=N
 
             avg_loss_val = loss_val / len(data_loader_eval)
             avg_acc_val = float(acc_val.cpu().numpy()) / len(data_loader_eval.dataset)
+            
+            if(best_accuracy_yet <= avg_acc_val):
+                best_accuracy_yet = avg_acc_val
+                best_model_wts = copy.deepcopy(graph_model.state_dict())
+                best_i3d_model_wts = copy.deepcopy(i3d_online.state_dict())
 
+                save_model(graph_model, "Graph-SourceOnly-Model-Best.pth")
+                save_model(i3d_online, "I3D-SourceOnly-Online-Model-Best.pth")
+
+                best_itrn = itrn + 1
+            
             checkpoint_path_current = os.path.join(params.warmstart_graph_checkpoint, "Current-Checkpoint.pt")
             torch.save({
                         'iter':itrn+1,
@@ -577,16 +587,6 @@ def warmstart_models(graph_model, i3d_online, src_data_loader, tgt_data_loader=N
                         'best_accuracy_yet':best_accuracy_yet,
                         'best_itrn':best_itrn
                         },checkpoint_path_current)
-            
-            if(best_accuracy_yet <= avg_acc_val):
-                best_accuracy_yet = avg_acc_val
-                best_model_wts = copy.deepcopy(graph_model.state_dict())
-                best_i3d_model_wts = copy.deepcopy(i3d_online.state_dict())
-
-                save_model(graph_model, "Graph-SourceOnly-Model-Best.pth")
-                save_model(i3d_online, "I3D-SourceOnly-Online-Model-Best.pth")
-
-                best_itrn = itrn + 1
 
             print('best_acc_yet: ', best_accuracy_yet, ' ( in itrn:', best_itrn, ')...')
             graph_model.train()
