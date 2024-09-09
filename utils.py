@@ -82,13 +82,11 @@ def select_folders_to_zip(src:SrcFiles, dst: str):
     for fileid, file in enumerate(src.paths):
         if not os.path.exists(file):
             print(file)
-        files.append(glob.glob(f"{file}/*"))
+        frames = os.listdir(file)
+        files.extend([os.path.join(file, x) for x in frames])
     #with open("filelist.txt", "w") as f:
     #    f.write("\n".join(files))
     print("Starting zip operation")
-    #os.system(f"zip -qq {dst} -@ < filelist.txt")
-    import ipdb; ipdb.set_trace()
-    files = [y for x in files for y in x]
     with zipfile.ZipFile(dst, 'w', zipfile.ZIP_DEFLATED) as zipf:
         for file in files:
             print('Adding', file)
