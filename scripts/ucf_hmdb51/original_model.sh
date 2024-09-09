@@ -15,7 +15,7 @@ cd $SLURM_TMPDIR
 mkdir ucf_hmdb
 cp /scratch/smuralid/datasets/ucf_hmdb_condensed.zip $SLURM_TMPDIR/ucf_hmdb
 cd ucf_hmdb
-unzip ucf_hmdb_condensed.zip
+unzip -qq ucf_hmdb_condensed.zip
 cd $SLURM_TMPDIR
 
 git clone git@github.com:srikanth-sfu/CoMix.git
