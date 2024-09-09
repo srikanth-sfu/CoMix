@@ -80,12 +80,20 @@ def select_folders_to_zip(src:SrcFiles, dst: str):
     files = []
     print(f"Total of {num_files} videos")
     for fileid, file in enumerate(src.paths):
-        files.extend(glob.glob(f"{file}/*"))
-    with open("filelist.txt", "w") as f:
-        f.write("\n".join(files))
+        if not os.path.exists(file):
+            print(file)
+        files.append(glob.glob(f"{file}/*"))
+    #with open("filelist.txt", "w") as f:
+    #    f.write("\n".join(files))
     print("Starting zip operation")
-    os.system(f"zip -qq {dst} -@ < filelist.txt")
-    
+    #os.system(f"zip -qq {dst} -@ < filelist.txt")
+    import ipdb; ipdb.set_trace()
+    files = [y for x in files for y in x]
+    with zipfile.ZipFile(dst, 'w', zipfile.ZIP_DEFLATED) as zipf:
+        for file in files:
+            print('Adding', file)
+            zipf.write(file)
+
 def select_folders_zip(src_zip_filename: str, tgt_filename: str, paths: Set):
     # paths: set of folder names (video frame folders) to copy
     # src_zip_filename: zipped dataset frame folders
@@ -102,12 +110,15 @@ def select_folders_zip(src_zip_filename: str, tgt_filename: str, paths: Set):
 def main_select_folders():
     # Load dataset only part of domain adaptation sub-component. BG folder list used in this case 
     root = "%s"%(os.getenv('SLURM_TMPDIR'))
-    bg_file = "ucf_BG.zip"
+    bg_file = "hmdb_BG.zip"
     bg_file_no_ext = bg_file.split(".")[0]
-    vid_file = "ucf_videos.zip"
+    vid_file = "hmdb_videos_modified.zip"
     src_list = zipfile.ZipFile(f"{root}/{bg_file}", 'r').namelist()
     src_list = set([os.path.basename(x[:-1]) for x in src_list if x[-1] == "/" and x != f"{bg_file_no_ext}/"])
     src_list = [os.path.basename(x) for x in src_list]
     tgt_zip = f"{root}/{vid_file}"
-    dst = "ucf_filtered.zip"
+    dst = "hmdb_filtered.zip"
     select_folders_zip(tgt_zip, dst, paths=src_list)
+
+if __name__ == "__main__":
+    main_select_folders()
