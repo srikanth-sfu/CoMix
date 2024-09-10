@@ -7,6 +7,8 @@
 #SBATCH --mem-per-cpu=64G
 #SBATCH --nodes=1
 #SBATCH --time=0-00:01
+#SBATCH -o /home/smuralid/error/slurm-%j.out  # Write the log on scratch
+#SBATCH -e /home/smuralid/error/slurm-%j.err
 source activate focal
 cd $SLURM_TMPDIR
 timeout 15s test.py
