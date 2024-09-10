@@ -6,11 +6,14 @@
 #SBATCH --account=def-mpederso
 #SBATCH --mem-per-cpu=64G
 #SBATCH --nodes=1
-#SBATCH --time=0-00:01
+#SBATCH --time=0-03:00
 #SBATCH -o /home/smuralid/error/slurm-%j.out  # Write the log on scratch
 #SBATCH -e /home/smuralid/error/slurm-%j.err
 source activate focal
 cd $SLURM_TMPDIR
+git clone git@github.com:srikanth-sfu/CoMix.git
+cd CoMix
+git checkout baseline_splitpretrain
 timeout 15s python test.py
 if [ $? -eq 124 ]; then
   echo "The script timed out after ${MAX_HOURS} hour(s). Restarting..."
