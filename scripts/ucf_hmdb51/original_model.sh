@@ -10,6 +10,7 @@
 #SBATCH --time=0-00:30
 #SBATCH -o /home/smuralid/error/tubelets/comix/slurm-%j.out  # Write the log on scratch
 #SBATCH -e /home/smuralid/error/tubelets/comix/slurm-%j.err
+eval "$(conda shell.bash hook)"
 source activate focal
 cd $SLURM_TMPDIR
 mkdir ucf_hmdb
@@ -25,6 +26,7 @@ timeout 29m python main.py --manual_seed 1 --dataset_name UCF-HMDB --src_dataset
 if [ $? -eq 124 ]; then
   echo "The script timed out after ${MAX_HOURS} hour(s). Restarting..."
   # Call the script itself again with the same configuration
+  cd /project/def-mpederso/smuralid/CoMix
   sbatch scripts/ucf_hmdb51/original_model.sh
   # scontrol requeue $SLURM_JOB_ID
 else
