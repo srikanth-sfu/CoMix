@@ -1,15 +1,17 @@
-#!/bin/bash
+#!/bin/zsh
 # ---------------------------------------------------------------------
 # SLURM script for job resubmission on our clusters. 
 # ---------------------------------------------------------------------
 #SBATCH --job-name=baseline_run
-#SBATCH --account=def-mpederso
+#SBATCH --account=rrg-mpederso
 #SBATCH --mem-per-cpu=64G
 #SBATCH --nodes=1
+#SBATCH --gres=gpu:4
 #SBATCH --time=0-03:00
 #SBATCH -o /home/smuralid/error/slurm-%j.out  # Write the log on scratch
 #SBATCH -e /home/smuralid/error/slurm-%j.err
-source activate focal
+eval "$(conda shell.bash hook)"
+conda activate focal
 cd $SLURM_TMPDIR
 git clone git@github.com:srikanth-sfu/CoMix.git
 cd CoMix
