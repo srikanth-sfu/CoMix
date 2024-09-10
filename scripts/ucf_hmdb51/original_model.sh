@@ -25,7 +25,7 @@ timeout 29m python main.py --manual_seed 1 --dataset_name UCF-HMDB --src_dataset
 if [ $? -eq 124 ]; then
   echo "The script timed out after ${MAX_HOURS} hour(s). Restarting..."
   # Call the script itself again with the same configuration
-  sbatch scripts/ucf_hmdb51_original_model.sh
+  sbatch scripts/ucf_hmdb51/original_model.sh
   # scontrol requeue $SLURM_JOB_ID
 else
   echo "The script finished before timing out."
