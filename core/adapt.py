@@ -486,7 +486,7 @@ def warmstart_models(graph_model, i3d_online, src_data_loader, tgt_data_loader=N
         os.makedirs(params.model_root)
 
 
-    for itrn in range(start_iter+1, num_iterations):
+    for itrn in range(start_iter, num_iterations):
         print("\rRunning Iteration (source-only) : {}/{}".format(itrn, num_iterations), end='', flush=True)
         if itrn%100 == 0:
             print('Itrn: (T)', itrn+1, 'LR:', scheduler.get_lr())
