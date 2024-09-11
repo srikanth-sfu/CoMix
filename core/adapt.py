@@ -456,17 +456,6 @@ def warmstart_models(graph_model, i3d_online, src_data_loader, tgt_data_loader=N
     best_model_wts = copy.deepcopy(graph_model.state_dict())
     best_i3d_model_wts = copy.deepcopy(i3d_online.state_dict())
 
-    best_model_wts_path = os.path.join(params.warmstart_graph_checkpoint, "Graph-SourceOnly-Model-Best.pth")
-    best_i3d_model_wts_path = os.path.join(params.warmstart_graph_checkpoint, "I3D-SourceOnly-Online-Model-Best.pth")
-    print('Loading the best model weights from: ', best_model_wts_path, best_i3d_model_wts_path)
-
-
-    best_model_wts = torch.load(best_model_wts_path)
-    best_i3d_model_wts = torch.load(best_i3d_model_wts_path)
-
-    graph_model.load_state_dict(best_model_wts)
-    i3d_online.load_state_dict(best_i3d_model_wts)
-
     print_line()
     print_line()
     print_line()
@@ -484,8 +473,6 @@ def warmstart_models(graph_model, i3d_online, src_data_loader, tgt_data_loader=N
     if not os.path.exists(params.model_root):
         os.makedirs(params.model_root)
 
-    # graph_model.train()
-    # i3d_online.train()
 
     for itrn in range(start_iter, num_iterations):
         print("\rRunning Iteration (source-only) : {}/{}".format(itrn, num_iterations), end='', flush=True)
@@ -521,11 +508,11 @@ def warmstart_models(graph_model, i3d_online, src_data_loader, tgt_data_loader=N
         
         loss = cls_loss
         
-        # loss.backward()
+        loss.backward()
      
-        # optimizer.step()
+        optimizer.step()
         
-        # scheduler.step()
+        scheduler.step()
 
         # Log updates.
         if ((itrn + 1) % params.log_in_steps == 0):
