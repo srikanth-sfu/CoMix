@@ -508,11 +508,11 @@ def warmstart_models(graph_model, i3d_online, src_data_loader, tgt_data_loader=N
         
         loss = cls_loss
         
-        loss.backward()
+        # loss.backward()
      
-        optimizer.step()
+        # optimizer.step()
         
-        scheduler.step()
+        # scheduler.step()
 
         # Log updates.
         if ((itrn + 1) % params.log_in_steps == 0):
