@@ -467,7 +467,6 @@ def warmstart_models(graph_model, i3d_online, src_data_loader, tgt_data_loader=N
     graph_model.load_state_dict(best_model_wts)
     i3d_online.load_state_dict(best_i3d_model_wts)
 
-
     print_line()
     print_line()
     print_line()
