@@ -28,9 +28,9 @@ if [ $? -eq 124 ]; then
   echo "The script timed out after ${MAX_HOURS} hour(s). Restarting..."
   # Call the script itself again with the same configuration
   cd /project/def-mpederso/smuralid/CoMix
-  sbatch scripts/ucf_hmdb51/original_model.sh
+  sbatch scripts/ucf_hmdb51/adapt_scripts/original_model.sh
   # scontrol requeue $SLURM_JOB_ID
 else
-  echo "The script finished before timing out."
+  echo "Script completed before timeout"
   # Exit or perform any other necessary cleanup
 fi
