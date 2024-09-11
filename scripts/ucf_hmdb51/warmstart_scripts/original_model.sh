@@ -32,5 +32,6 @@ if [ $? -eq 124 ]; then
   # scontrol requeue $SLURM_JOB_ID
 else
   cd /project/def-mpederso/smuralid/CoMix
+  echo "Starting Adapt Script"
   sbatch scripts/ucf_hmdb51/adapt_scripts/original_model.sh
 fi
