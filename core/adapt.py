@@ -601,10 +601,13 @@ def warmstart_models(graph_model, i3d_online, src_data_loader, tgt_data_loader=N
         del feat_src, labels, preds_src, i3d_feat_src
 
     # Load the best models and save them.
-    print('Loading the best model weights...')
+    best_model_wts_path = os.path.join(params.warmstart_graph_checkpoint, "Graph-SourceOnly-Model-Best.pth")
+    best_i3d_model_wts_path = os.path.join(params.warmstart_graph_checkpoint, "I3D-SourceOnly-Online-Model-Best.pth")
+    print('Loading the best model weights from: ', best_model_wts_path, best_i3d_model_wts_path)
 
-    best_model_wts = torch.load(os.path.join(params.warmstart_graph_checkpoint, "Graph-SourceOnly-Model-Best.pth"))
-    best_i3d_model_wts = torch.load(os.path.join(params.warmstart_graph_checkpoint, "I3D-SourceOnly-Online-Model-Best.pth"))
+
+    best_model_wts = torch.load(best_model_wts_path)
+    best_i3d_model_wts = torch.load(best_i3d_model_wts_path)
 
     graph_model.load_state_dict(best_model_wts)
     i3d_online.load_state_dict(best_i3d_model_wts)
