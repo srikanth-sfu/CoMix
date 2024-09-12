@@ -34,7 +34,7 @@ def main():
                 dtype=np.uint8)
                 for _ in range(num_frames)]
     transformed_frames, _ = composed_transform.apply_image(frames, return_transform_param=True)
-    transformed_frames = np.concatenate(transformed_frames)
+    transformed_frames = np.stack(transformed_frames)
     print(transformed_frames.shape)
 
 
