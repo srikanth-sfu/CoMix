@@ -6,7 +6,7 @@ import random
 import cv2
 from typing import List
 
-from .transforms import BaseTransform
+from . import BaseTransform
 from .dynamic_utils import extend_key_frame_to_all, sample_key_frames
 import imutils
 import math
