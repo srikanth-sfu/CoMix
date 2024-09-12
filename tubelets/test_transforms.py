@@ -28,12 +28,13 @@ def main():
     num_channels = 3        # Number of color channels (RGB)
 
     # Generate random pixel values between 0 and 255 for each frame
-    frames = np.random.randint(0, 256, 
-                                (num_frames, frame_height, frame_width, num_channels), 
-                                dtype=np.uint8)
-    
-    transformed_frames = apply_transform_on_frames(frames)
-    print(transformed_frames)
+    frames = [np.random.randint(0, 256, 
+                (frame_height, frame_width, num_channels), 
+                dtype=np.uint8)
+                for _ in range(num_frames)]
+    transformed_frames, _ = composed_transform.apply_image(frames, return_transform_param=True)
+    transformed_frames = np.concatenate(transformed_frames)
+    print(transformed_frames.shape)
 
 
 if __name__ == "__main__":
