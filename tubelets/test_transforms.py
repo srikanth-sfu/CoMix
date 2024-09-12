@@ -58,7 +58,7 @@ def main():
 
     tranformed = transformed_frames + transformed_frames2
     img_tensor, trans_params = \
-            transform_params2.apply_image(transformed,
+            composed_transform2.apply_image(transformed,
                                            return_transform_param=True)
 
     clip_len = int(img_tensor.size(0) / 2)
