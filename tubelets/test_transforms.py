@@ -37,6 +37,7 @@ def main():
         ]
 
     composed_transform = build_transform(transform_params)
+    composed_transform2 = build_transform(transform_params2)
     num_frames = 8        # Number of frames
     frame_height = 224      # Height of each frame
     frame_width = 224       # Width of each frame
@@ -47,9 +48,24 @@ def main():
                 (frame_height, frame_width, num_channels), 
                 dtype=np.uint8)
                 for _ in range(num_frames)]
+
+    frames2 = [np.random.randint(0, 256, 
+                (frame_height, frame_width, num_channels), 
+                dtype=np.uint8)
+                for _ in range(num_frames)]
     transformed_frames, _ = composed_transform.apply_image(frames, return_transform_param=True)
-    transformed_frames = np.stack(transformed_frames)
-    print(transformed_frames.shape, transformed_frames.dtype)
+    transformed_frames2, _ = composed_transform.apply_image(frames2, return_transform_param=True)
+
+    tranformed = transformed_frames + transformed_frames2
+    img_tensor, trans_params = \
+            self.img_transform_2.apply_image(transformed,
+                                           return_transform_param=True)
+
+    clip_len = int(img_tensor.size(0) / 2)
+    img_tensor_1 = img_tensor[0:clip_len,:,:,:].permute(1, 0, 2, 3).contiguous()
+    img_tensor_2 = img_tensor[clip_len:,:,:,:].permute(1, 0, 2, 3).contiguous()
+
+    print(img_tensor_1.shape, img_tensor_2.shape)
 
 
 if __name__ == "__main__":
