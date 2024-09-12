@@ -56,7 +56,7 @@ def main():
     transformed_frames, _ = composed_transform.apply_image(frames, return_transform_param=True)
     transformed_frames2, _ = composed_transform.apply_image(frames2, return_transform_param=True)
 
-    tranformed = transformed_frames + transformed_frames2
+    transformed = transformed_frames + transformed_frames2
     img_tensor, trans_params = \
             composed_transform2.apply_image(transformed,
                                            return_transform_param=True)
