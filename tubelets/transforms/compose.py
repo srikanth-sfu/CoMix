@@ -3,10 +3,13 @@
 
 import numpy as np
 from typing import List
+from mmcv import build_from_cfg
 
 from .base_transform import BaseTransform
+from ...builder import TRANSFORMS
 
 
+@TRANSFORMS.register_module()
 class Compose(BaseTransform):
 
     def __init__(self, transform_cfgs: List[dict]):
@@ -14,6 +17,8 @@ class Compose(BaseTransform):
         for transform_cfg in transform_cfgs:
             if isinstance(transform_cfg, BaseTransform):
                 self.transforms.append(transform_cfg)
+            else:
+                self.transforms.append(build_from_cfg(transform_cfg, TRANSFORMS))
 
     def get_transform_param(self, *args, **kwargs):
         raise NotImplementedError

@@ -7,7 +7,10 @@ import random
 from typing import Union, Tuple, List, Iterable
 
 from .base_transform import BaseTransform
+from ...builder import TRANSFORMS
 
+
+@TRANSFORMS.register_module()
 class GroupRandomCrop(BaseTransform):
 
     def __init__(self,
@@ -56,6 +59,7 @@ class GroupRandomCrop(BaseTransform):
         return flows
 
 
+@TRANSFORMS.register_module()
 class GroupCenterCrop(BaseTransform):
 
     def __init__(self,

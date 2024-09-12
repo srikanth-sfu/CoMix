@@ -5,8 +5,10 @@ import numpy as np
 import torch
 from typing import List, Iterable
 from .base_transform import BaseTransform
+from ...builder import TRANSFORMS
 
 
+@TRANSFORMS.register_module()
 class GroupToTensor(BaseTransform):
 
     def __init__(self,

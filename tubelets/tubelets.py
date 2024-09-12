@@ -6,9 +6,8 @@ import random
 import cv2
 from typing import List
 
-from .datasets import BaseTransform
+from .transforms import BaseTransform
 from .dynamic_utils import extend_key_frame_to_all, sample_key_frames
-from .builder import TRANSFORMS
 import imutils
 import math
 from scipy.ndimage import gaussian_filter1d
@@ -109,7 +108,6 @@ class RandomRegionSampler(object):
         return box_shapes
 
 
-@TRANSFORMS.register_module()
 class Tubelets(BaseTransform):
 
     def __init__(self,
