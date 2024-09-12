@@ -9,4 +9,4 @@ def build_transform(params: List[Dict]):
         
 
 
-    return Compose(transform_list)
+    return T.Compose(transform_list)
