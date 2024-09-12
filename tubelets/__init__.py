@@ -1,5 +1,5 @@
 from  . import transforms as T
-from typing import List
+from typing import List, Dict
 
 def build_transform(params: List[Dict]):
     transform_list = []
