@@ -1,19 +1,6 @@
-from .transforms import *
+from . import build_transform
 import numpy as np
 from typing import List, Dict
-
-def build_transform(params: List[Dict]):
-    transform_list = []
-    for param in params:
-        if param['type'] == 'GroupScale':
-            transform_list.append(GroupScale(scales=param['scales']))
-        elif param['type'] == 'GroupFlip':
-            transform_list.append(GroupFlip(flip_prob=param['flip_prob']))
-        elif param['type'] == 'GroupRandomCrop':
-            transform_list.append(GroupRandomCrop(out_size=param['out_size']))
-
-
-    return Compose(transform_list)
 
 def main():
     transform_params = [
@@ -21,6 +8,33 @@ def main():
         dict(type='GroupFlip', flip_prob=0.5),
         dict(type='GroupRandomCrop', out_size=224)
     ]
+
+    transform_params2=[
+            dict(
+                type='Tubelets',
+                region_sampler=dict(
+                    scales=[32, 48, 56, 64, 96, 128],
+                    ratios=[0.5, 0.67, 0.75, 1.0, 1.33, 1.50, 2.0],
+                    scale_jitter=0.18,
+                    num_rois=2,
+                ),
+                key_frame_probs=[0.5, 0.3, 0.2],
+                loc_velocity=5,
+                rot_velocity=6,
+                shear_velocity=0.066,
+                size_velocity=0.0001,
+                label_prob=1.0,
+                motion_type='gaussian',
+                patch_transformation='rotation',
+            ),
+            dict(
+                type='GroupToTensor',
+                switch_rgb_channels=True,
+                div255=True,
+                mean=(0.485, 0.456, 0.406),
+                std=(0.229, 0.224, 0.225)
+            )
+        ]
 
     composed_transform = build_transform(transform_params)
     num_frames = 8        # Number of frames

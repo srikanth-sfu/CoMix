@@ -9,8 +9,9 @@ from .crop import GroupRandomCrop, GroupCenterCrop
 from .scale import GroupScale
 from .tensor import GroupToTensor
 from .flip import GroupFlip
+from .tubelets import Tubelets
 
 __all__ = ['BaseTransform', 'RandomContrast', 'RandomBrightness',
            'RandomHueSaturation', 'DynamicContrast', 'DynamicBrightness',
            'Compose', 'GroupToTensor', 'GroupScale', 'GroupCenterCrop',
-           'GroupRandomCrop', 'GroupFlip']
+           'GroupRandomCrop', 'GroupFlip','Tubelets']
