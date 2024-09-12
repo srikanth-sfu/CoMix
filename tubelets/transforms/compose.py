@@ -6,19 +6,13 @@ from typing import List
 from mmcv import build_from_cfg
 
 from .base_transform import BaseTransform
-from ...builder import TRANSFORMS
 
-
-@TRANSFORMS.register_module()
 class Compose(BaseTransform):
 
-    def __init__(self, transform_cfgs: List[dict]):
+    def __init__(self, transform_cfgs):
         self.transforms = []  # type: List[BaseTransform]
         for transform_cfg in transform_cfgs:
-            if isinstance(transform_cfg, BaseTransform):
-                self.transforms.append(transform_cfg)
-            else:
-                self.transforms.append(build_from_cfg(transform_cfg, TRANSFORMS))
+            self.transforms.append(transform_cfg)
 
     def get_transform_param(self, *args, **kwargs):
         raise NotImplementedError
