@@ -6,10 +6,7 @@ import numpy as np
 from typing import Union, Tuple, List
 
 from .base_transform import BaseTransform
-from ...builder import TRANSFORMS
 
-
-@TRANSFORMS.register_module()
 class GroupScale(BaseTransform):
 
     def __init__(self, scales: Union[List[Tuple[int, int]], Tuple[int, int]]):

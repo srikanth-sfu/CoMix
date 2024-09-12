@@ -5,10 +5,8 @@ import numpy as np
 import random
 from typing import List
 from .base_transform import BaseTransform
-from ...builder import TRANSFORMS
 
 
-@TRANSFORMS.register_module()
 class GroupFlip(BaseTransform):
 
     def __init__(self, flip_prob: float = 0.5):

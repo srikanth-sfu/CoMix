@@ -6,10 +6,8 @@ import cv2
 from typing import List
 from .base_transform import BaseTransform
 from .dynamic_utils import sample_key_frames, extend_key_frame_to_all
-from ...builder import TRANSFORMS
 
 
-@TRANSFORMS.register_module()
 class RandomBrightness(BaseTransform):
 
     def __init__(self,
@@ -32,7 +30,6 @@ class RandomBrightness(BaseTransform):
         return data
 
 
-@TRANSFORMS.register_module()
 class RandomContrast(BaseTransform):
 
     def __init__(self,
@@ -55,7 +52,6 @@ class RandomContrast(BaseTransform):
         return data
 
 
-@TRANSFORMS.register_module()
 class RandomHueSaturation(BaseTransform):
 
     def __init__(self,
@@ -99,7 +95,6 @@ class RandomHueSaturation(BaseTransform):
         return nimg
 
 
-@TRANSFORMS.register_module()
 class DynamicContrast(BaseTransform):
 
     def __init__(self,
@@ -129,7 +124,6 @@ class DynamicContrast(BaseTransform):
         return data
 
 
-@TRANSFORMS.register_module()
 class DynamicBrightness(BaseTransform):
 
     def __init__(self,
