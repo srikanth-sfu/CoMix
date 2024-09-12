@@ -1,4 +1,4 @@
-import .transforms as T
+from  . import transforms as T
 
 def build_transform(params: List[Dict]):
     transform_list = []
