@@ -3,7 +3,6 @@
 
 import numpy as np
 from typing import List
-from mmcv import build_from_cfg
 
 from .base_transform import BaseTransform
 
