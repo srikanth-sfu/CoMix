@@ -6,6 +6,7 @@ from utils import *
 from dataset import *
 import argparse
 import os
+from tubelets import build_transform
 
 parser = argparse.ArgumentParser(description='All arguments for the program.')
 
@@ -73,6 +74,36 @@ if __name__ == '__main__':
 
     print(args)
 
+    tubelet_params=[
+            dict(
+                type='Tubelets',
+                region_sampler=dict(
+                    scales=[32, 48, 56, 64, 96, 128],
+                    ratios=[0.5, 0.67, 0.75, 1.0, 1.33, 1.50, 2.0],
+                    scale_jitter=0.18,
+                    num_rois=2,
+                ),
+                key_frame_probs=[0.5, 0.3, 0.2],
+                loc_velocity=5,
+                rot_velocity=6,
+                shear_velocity=0.066,
+                size_velocity=0.0001,
+                label_prob=1.0,
+                motion_type='gaussian',
+                patch_transformation='rotation',
+            ),
+            dict(
+                type='GroupToTensor',
+                switch_rgb_channels=True,
+                div255=True,
+                mean=(0.485, 0.456, 0.406),
+                std=(0.229, 0.224, 0.225)
+            )
+        ]
+    
+    tubelet_transform = build_transform(tubelet_transform)
+
+
     if params.dataset_name=="UCF-HMDB":
         if params.src_dataset=="UCF" and params.tgt_dataset=="HMDB":
             source_dataset = VideoDataset_UCFHMDB(csv_file='./video_splits/ucf101_train_hmdb_ucf.csv', dataset_name='ucf', transform=None, base_dir = params.base_dir)
@@ -117,4 +148,4 @@ if __name__ == '__main__':
     print('TemporalGraph:')
     print(graph_model)
 
-    graph_model = train_comix(graph_model, source_dataloader, target_dataloader, target_dataloader_eval, num_iterations=params.num_iter_adapt)
+    graph_model = train_comix(graph_model, source_dataloader, target_dataloader, target_dataloader_eval, tubelet_transform, num_iterations=params.num_iter_adapt)

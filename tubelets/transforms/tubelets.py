@@ -547,8 +547,9 @@ class Tubelets(BaseTransform):
                 tr_x = np.clip(tr_x,0,w-1)
                 tr_y = np.clip(tr_y,0,h-1)
 
-                # sample 16 points from trajectory with linear spacing
-                idxs = np.round(np.linspace(0, tr_x.shape[0]-1, num=16)).astype(int)
+                # sample 8 points from trajectory with linear spacing
+                # NOTE: hardcoded
+                idxs = np.round(np.linspace(0, tr_x.shape[0]-1, num=8)).astype(int)
                 x_f = tr_x[idxs].astype(int)
                 y_f = tr_y[idxs].astype(int)
                 #print(x_f.shape,y_f.shape)

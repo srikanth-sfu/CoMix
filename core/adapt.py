@@ -64,7 +64,7 @@ def simclr_loss(output_fast, output_slow, criterion, labels=None, normalize=True
 
 
 #####...Train CoMix...#####
-def train_comix(graph_model, src_data_loader, tgt_data_loader=None, data_loader_eval=None, num_iterations=10000):
+def train_comix(graph_model, src_data_loader, tgt_data_loader=None, data_loader_eval=None, tubelet_transform, num_iterations=10000):
     # Trainer function
     
     graph_model.train()
@@ -193,7 +193,7 @@ def train_comix(graph_model, src_data_loader, tgt_data_loader=None, data_loader_
         else:
             num_slow_nodes = 8
 
-
+        import ipdb; ipdb.set_trace()
         mix_ratio = np.random.uniform(0, params.max_gamma)
 
 
