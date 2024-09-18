@@ -63,15 +63,37 @@ def simclr_loss(output_fast, output_slow, criterion, labels=None, normalize=True
 
 def prepare_tubelet_inputs(vid):
     vid = vid.reshape(vid.shape[0]*vid.shape[1], *vid.shape[2:])
-    return [np.squeeze(x, axis=0) for x in vid.split(vid, vid.shape[0], axis=0)]
+    return [np.squeeze(x, axis=0) for x in np.split(vid, vid.shape[0], axis=0)]
 
-def transform_tubelet(vid1, vid2):
-    x, y = vid1.shape[0], vid1.shape[1]
+def apply_transform(vid1, vid2, transform_fn):
+    vid1 = [np.squeeze(x, axis=1).transpose(1,2,0) for x in np.split(vid1, vid1.shape[1], axis=1)]
+    vid2 = [np.squeeze(x, axis=1).transpose(1,2,0) for x in np.split(vid2, vid2.shape[1], axis=1)]
+	
+    vid = vid1 + vid2
+    vid_tensor, trans_params = \
+            transform_fn.apply_image(vid, return_transform_param=True)
+    
+    clip_len = int(vid_tensor.size(0) / 2)
+    vid1 = vid_tensor[0:clip_len,:,:,:].permute(1, 0, 2, 3).contiguous()
+    vid2 = vid_tensor[clip_len:,:,:,:].permute(1, 0, 2, 3).contiguous()
+    
+    return vid1, vid2
+
+def transform_tubelet(vid1, vid2, fn):
+    orig_shape = vid1.shape
     vid1, vid2 = prepare_tubelet_inputs(vid1), prepare_tubelet_inputs(vid2)
-    out_vid1, out_vid2 = [], []
-    for vid1_tuple, vid2_tuple in zip(vid1, vid2):
-        pass
-
+    from multiprocessing import Pool
+    pool = Pool(8)
+    inputs = [(x,y,fn) for x,y in zip(vid1, vid2)]
+    vid_samples = pool.starmap(apply_transform, inputs)
+    out_vid1 = [x[0] for x in vid_samples]
+    out_vid2 = [x[1] for x in vid_samples]
+    out_vid1 = torch.stack(out_vid1)
+    out_vid1 = out_vid1.reshape(orig_shape).cuda()
+    out_vid2 = torch.stack(out_vid2)
+    out_vid2 = out_vid2.reshape(orig_shape).cuda()
+    
+    return out_vid1, out_vid2
 
 #####...Train CoMix...#####
 def train_comix(graph_model, src_data_loader, tgt_data_loader=None, data_loader_eval=None, tubelet_transform=None, num_iterations=10000):
@@ -204,13 +226,14 @@ def train_comix(graph_model, src_data_loader, tgt_data_loader=None, data_loader_
             num_slow_nodes = 8
 
         feat_src_np, feat_tgt_np = feat_src.cpu().numpy(), feat_tgt.cpu().numpy()
-        feat_src_np, feat_tgt_np = transform_tubelet(feat_src_np, feat_tgt_np)
+        src_mix_tgt_bg, tgt_mix_src_bg = transform_tubelet(feat_src_np, feat_tgt_np, tubelet_transform)
         
-        mix_ratio = np.random.uniform(0, params.max_gamma)
+#        mix_ratio = np.random.uniform(0, params.max_gamma)
+#
+#
+#        src_mix_tgt_bg = (feat_src*(1-mix_ratio)) + (bg_tgt.unsqueeze(1)*mix_ratio)
+#        tgt_mix_src_bg = (feat_tgt*(1-mix_ratio)) + (bg_src.unsqueeze(1)*mix_ratio)
 
-
-        src_mix_tgt_bg = (feat_src*(1-mix_ratio)) + (bg_tgt.unsqueeze(1)*mix_ratio)
-        tgt_mix_src_bg = (feat_tgt*(1-mix_ratio)) + (bg_src.unsqueeze(1)*mix_ratio)
 
         src_mix_tgt_bg = src_mix_tgt_bg.float()
         src_mix_tgt_bg = make_variable(src_mix_tgt_bg, gpu_id=params.src_gpu_id)
@@ -638,9 +661,36 @@ if __name__ == "__main__":
     num_channels = 3        # Number of color channels (RGB)
     bs = 7
     num_nodes = 16
-    frames = np.random.randn(bs, num_nodes, frame_height, frame_width, num_channels).astype('float32')
-    frames2 = np.random.randn(bs, num_nodes, frame_height, frame_width, num_channels).astype('float32')
-
-
-    import ipdb; ipdb.set_trace()
-    frames, frames2 = transform_tubelet(frames, frames2)
+    frames = np.random.randn(bs, num_nodes, num_channels, num_frames, frame_height, frame_width).astype('float32')
+    frames2 = np.random.randn(bs, num_nodes, num_channels, num_frames, frame_height, frame_width).astype('float32')
+    from tubelets import build_transform
+    transform_fn = [
+            dict(
+                type='Tubelets',
+                region_sampler=dict(
+                    scales=[32, 48, 56, 64, 96, 128],
+                    ratios=[0.5, 0.67, 0.75, 1.0, 1.33, 1.50, 2.0],
+                    scale_jitter=0.18,
+                    num_rois=2,
+                ),
+                key_frame_probs=[0.5, 0.3, 0.2],
+                loc_velocity=5,
+                rot_velocity=6,
+                shear_velocity=0.066,
+                size_velocity=0.0001,
+                label_prob=1.0,
+                motion_type='gaussian',
+                patch_transformation='rotation',
+            ),
+            dict(
+                type='GroupToTensor',
+                switch_rgb_channels=True,
+                div255=True,
+                mean=(0.485, 0.456, 0.406),
+                std=(0.229, 0.224, 0.225)
+            )
+        ]
+    transform_fn = build_transform(transform_fn) 
+    
+    frames, frames2 = transform_tubelet(frames, frames2, transform_fn)
+    print(frames2.shape)
