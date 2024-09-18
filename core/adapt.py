@@ -378,12 +378,13 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
         # Log updates.
         if ((itrn + 1) % params.log_in_steps == 0):
             print_line()
-            print("Iteration [{}/{}]: ce_loss={} bgm_loss={} tpl_loss={} total_loss={}"
+            print("Iteration [{}/{}]: ce_loss={} bgm_loss={} tpl_loss={} moco_loss={} total_loss={}"
                   .format(itrn + 1,
                           num_iterations,
                           cls_loss.item(),
                           simclr_mod_mix.item(),
                           sim_clr_loss_tgt.item(),
+                          moco_loss.item(),
                           loss.item()                          
                           ))
             print_line()
