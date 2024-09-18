@@ -65,8 +65,6 @@ class MoCo(nn.Module, TrainStepMixin):
 
     def forward(self, q, k):
 
-        #print("input size",imgs.size())
-        imgs_q = imgs
         q = nn.functional.normalize(q, dim=1)
 
         # compute key features
