@@ -315,8 +315,7 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
         preds_src_tubelet = graph_model(i3d_src_tubelet)
         preds_tgt_tubelet = graph_model(i3d_tgt_tubelet)
 
-        import ipdb; ipdb.set_trace()
-
+        moco_loss = moco.forward(preds_src_tubelet, preds_tgt_tubelet)["nce_loss"]
 
         cls_loss = CrossEntropyLabelSmooth(num_classes=num_classes, epsilon=0.1, size_average=False)(preds_src, labels).mean()
         
@@ -369,7 +368,7 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
         simclr_mod_mix = simclr_mod_src + simclr_mod_tgt
         
         pseudo_cls_loss = torch.tensor(0.0).cuda()
-        loss = cls_loss + (params.lambda_bgm * (simclr_mod_mix)) + (params.lambda_tpl * (sim_clr_loss_tgt))
+        loss = cls_loss + (params.lambda_bgm * (simclr_mod_mix)) + (params.lambda_tpl * (sim_clr_loss_tgt)) + (params.lambda_bgm*(moco_loss))
         
         loss.backward()
      
