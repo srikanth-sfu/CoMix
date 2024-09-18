@@ -194,6 +194,7 @@ def train_comix(graph_model, src_data_loader, tgt_data_loader=None, data_loader_
             num_slow_nodes = 8
 
         import ipdb; ipdb.set_trace()
+        feat_src_np, feat_tgt_np = feat_src.cpu().numpy(), feat_tgt.cpu().numpy()
         mix_ratio = np.random.uniform(0, params.max_gamma)
 
 
