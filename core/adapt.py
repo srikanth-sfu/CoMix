@@ -642,5 +642,5 @@ if __name__ == "__main__":
     frames2 = np.random.randint(0, 256, (bs, num_nodes, frame_height, frame_width, num_channels), dtype=np.float32)
 
 
-    frames, frames2 = transform_tubelet(frames, frames2)
     import ipdb; ipdb.set_trace()
+    frames, frames2 = transform_tubelet(frames, frames2)
