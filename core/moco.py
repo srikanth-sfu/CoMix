@@ -1,7 +1,7 @@
 # Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
 import torch
 import torch.nn as nn
-from mixin import TrainStepMixin
+from .mixin import TrainStepMixin
 
 class Flatten(nn.Module):
     def __init__(self):
@@ -21,7 +21,6 @@ class Normalize(nn.Module):
         out = x.div(norm)
         return out
 
-@MODELS.register_module()
 class MoCo(nn.Module, TrainStepMixin):
     """
     Build a MoCo model with: a query encoder, a key encoder, and a queue
