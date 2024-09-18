@@ -356,6 +356,7 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
         src_fast = preds_src
         src_slow = preds_src_slow
 
+        print(src_fast.shape, src_slow.shape)
         simclr_mod_src = simclr_loss(torch.softmax(src_fast, dim=-1), torch.softmax(src_slow, dim=-1), simclr_loss_criterion, virtual_label)
 
         #tgt_fast = torch.cat((preds_tgt, preds_tgt_mix), dim=0)
