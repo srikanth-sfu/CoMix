@@ -7,6 +7,7 @@ from dataset import *
 import argparse
 import os
 from tubelets import build_transform
+from core import MoCo 
 
 parser = argparse.ArgumentParser(description='All arguments for the program.')
 
@@ -144,8 +145,10 @@ if __name__ == '__main__':
     graph_model = Graph_Model(dataset_name=params.dataset_name)
     graph_model.cuda()
 
+    moco = MoCo(out_channels=graph_model.nclass)
+
     print("=== Training started for CoMix ===")
     print('TemporalGraph:')
     print(graph_model)
 
-    graph_model = train_comix(graph_model, source_dataloader, target_dataloader, target_dataloader_eval, tubelet_transform, num_iterations=params.num_iter_adapt)
+    graph_model = train_comix(graph_model, moco, source_dataloader, target_dataloader, target_dataloader_eval, tubelet_transform, num_iterations=params.num_iter_adapt)
