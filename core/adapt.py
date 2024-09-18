@@ -267,7 +267,9 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
         # tgt_mix_src_bg = tgt_mix_src_bg.reshape(bs*num_nodes, num_c, chunk_size, H, W)
         # i3d_tgt_mix_src_bg = i3d_online(tgt_mix_src_bg)
 
+        src_tubelet = src_tubelet.reshape(bs*num_nodes, num_c, chunk_size, H, W)
         i3d_src_tubelet = i3d_online(src_tubelet)
+        tgt_tubelet = tgt_tubelet.reshape(bs*num_nodes, num_c, chunk_size, H, W)
         i3d_tgt_tubelet = i3d_online(tgt_tubelet)
 
         #------Slow range---------------
