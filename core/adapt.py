@@ -62,7 +62,8 @@ def simclr_loss(output_fast, output_slow, criterion, labels=None, normalize=True
     return criterion(output_new, labels)
 
 def prepare_tubelet_inputs(vid):
-    vid = vid.reshape(vid.shape[0]*vid.shape[1], *vid.shape[2:])
+    idx = random.randint(0,vid.shape[1]-1)
+    vid = vid[:,idx]
     return [np.squeeze(x, axis=0) for x in np.split(vid, vid.shape[0], axis=0)]
 
 def apply_transform(vid1, vid2, transform_fn):
@@ -89,9 +90,9 @@ def transform_tubelet(vid1, vid2, fn):
     out_vid1 = [x[0] for x in vid_samples]
     out_vid2 = [x[1] for x in vid_samples]
     out_vid1 = torch.stack(out_vid1)
-    out_vid1 = out_vid1.reshape(orig_shape).cuda()
+    out_vid1 = out_vid1.reshape(orig_shape[:1]+orig_shape[2:]).cuda()
     out_vid2 = torch.stack(out_vid2)
-    out_vid2 = out_vid2.reshape(orig_shape).cuda()
+    out_vid2 = out_vid2.reshape(orig_shape[:1]+orig_shape[2:]).cuda()
     
     return out_vid1, out_vid2
 
@@ -226,13 +227,13 @@ def train_comix(graph_model, src_data_loader, tgt_data_loader=None, data_loader_
             num_slow_nodes = 8
 
         feat_src_np, feat_tgt_np = feat_src.cpu().numpy(), feat_tgt.cpu().numpy()
-        src_mix_tgt_bg, tgt_mix_src_bg = transform_tubelet(feat_src_np, feat_tgt_np, tubelet_transform)
+        tubelet_src, tubelet_tgt = transform_tubelet(feat_src_np, feat_tgt_np, tubelet_transform)
         
-#        mix_ratio = np.random.uniform(0, params.max_gamma)
-#
-#
-#        src_mix_tgt_bg = (feat_src*(1-mix_ratio)) + (bg_tgt.unsqueeze(1)*mix_ratio)
-#        tgt_mix_src_bg = (feat_tgt*(1-mix_ratio)) + (bg_src.unsqueeze(1)*mix_ratio)
+        mix_ratio = np.random.uniform(0, params.max_gamma)
+
+
+        src_mix_tgt_bg = (feat_src*(1-mix_ratio)) + (bg_tgt.unsqueeze(1)*mix_ratio)
+        tgt_mix_src_bg = (feat_tgt*(1-mix_ratio)) + (bg_src.unsqueeze(1)*mix_ratio)
 
 
         src_mix_tgt_bg = src_mix_tgt_bg.float()
