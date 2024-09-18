@@ -60,7 +60,6 @@ class GCN(nn.Module):
         self.gc1 = GraphConvolution(nfeat, nhid)
         self.gc2 = GraphConvolution(nhid, nhid)
         self.gc3 = GraphConvolution(nhid, nclass)
-        self.nclass = nclass
         self.dropout = dropout
 
     def forward(self, x):
