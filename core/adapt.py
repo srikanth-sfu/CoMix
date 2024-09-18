@@ -306,8 +306,8 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
         preds_tgt = graph_model(i3d_feat_tgt)
         preds_tgt_slow = graph_model(i3d_feat_tgt_slow)
 
-        preds_src_mix = graph_model(i3d_src_mix_tgt_bg)
-        preds_src_mix_slow = graph_model(i3d_src_mix_tgt_bg_slow)
+        # preds_src_mix = graph_model(i3d_src_mix_tgt_bg)
+        # preds_src_mix_slow = graph_model(i3d_src_mix_tgt_bg_slow)
 
         # preds_tgt_mix = graph_model(i3d_tgt_mix_src_bg)
         # preds_tgt_mix_slow = graph_model(i3d_tgt_mix_src_bg_slow)
