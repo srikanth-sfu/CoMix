@@ -316,7 +316,7 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
         preds_tgt_tubelet = graph_model(i3d_tgt_tubelet)
 
         moco_loss = moco.forward(preds_src_tubelet, preds_tgt_tubelet)["nce_loss"]
-
+        print(preds_src.shape, labels.shape)
         cls_loss = CrossEntropyLabelSmooth(num_classes=num_classes, epsilon=0.1, size_average=False)(preds_src, labels).mean()
         
 
