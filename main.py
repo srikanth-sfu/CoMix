@@ -94,7 +94,7 @@ if __name__ == '__main__':
             )
         ]
     
-    tubelet_transform = build_transform(tubelet_transform)
+    tubelet_transform = build_transform(tubelet_params)
 
 
     if params.dataset_name=="UCF-HMDB":
