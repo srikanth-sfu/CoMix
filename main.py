@@ -91,6 +91,13 @@ if __name__ == '__main__':
                 label_prob=1.0,
                 motion_type='gaussian',
                 patch_transformation='rotation',
+            ),
+            dict(
+                type='GroupToTensor',
+                switch_rgb_channels=False,
+                div255=False,
+                mean=None,
+                std=None
             )
         ]
     

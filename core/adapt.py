@@ -61,6 +61,16 @@ def simclr_loss(output_fast, output_slow, criterion, labels=None, normalize=True
     #logits, labels = info_nce_loss(torch.cat((output_fast, output_slow), dim=0))
     return criterion(output_new, labels)
 
+def prepare_tubelet_inputs(vid):
+    vid = vid.reshape(vid.shape[0]*vid.shape[1], *vid.shape[2:])
+    return [np.squeeze(x, axis=0) for x in vid.split(vid, vid.shape[0], axis=0)]
+
+def transform_tubelet(vid1, vid2):
+    x, y = vid1.shape[0], vid1.shape[1]
+    vid1, vid2 = prepare_tubelet_inputs(vid1), prepare_tubelet_inputs(vid2)
+    out_vid1, out_vid2 = [], []
+    for vid1_tuple, vid2_tuple in zip(vid1, vid2):
+        pass
 
 
 #####...Train CoMix...#####
@@ -193,8 +203,9 @@ def train_comix(graph_model, src_data_loader, tgt_data_loader=None, data_loader_
         else:
             num_slow_nodes = 8
 
-        import ipdb; ipdb.set_trace()
         feat_src_np, feat_tgt_np = feat_src.cpu().numpy(), feat_tgt.cpu().numpy()
+        feat_src_np, feat_tgt_np = transform_tubelet(feat_src_np, feat_tgt_np)
+        
         mix_ratio = np.random.uniform(0, params.max_gamma)
 
 
@@ -617,3 +628,19 @@ def warmstart_models(graph_model, i3d_online, src_data_loader, tgt_data_loader=N
     save_model(i3d_online, "I3D-SourceOnly-Model-Best-{}.pth".format(best_itrn))
 
     return graph_model, i3d_online
+
+
+if __name__ == "__main__":
+    
+    num_frames = 8        # Number of frames
+    frame_height = 224      # Height of each frame
+    frame_width = 224       # Width of each frame
+    num_channels = 3        # Number of color channels (RGB)
+    bs = 7
+    num_nodes = 16
+    frames = np.random.randint(0, 256, (bs, num_nodes, frame_height, frame_width, num_channels), dtype=np.float32)
+    frames2 = np.random.randint(0, 256, (bs, num_nodes, frame_height, frame_width, num_channels), dtype=np.float32)
+
+
+    frames, frames2 = transform_tubelet(frames, frames2)
+    import ipdb; ipdb.set_trace()
