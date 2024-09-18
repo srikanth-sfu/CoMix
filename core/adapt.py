@@ -64,7 +64,7 @@ def simclr_loss(output_fast, output_slow, criterion, labels=None, normalize=True
 
 
 #####...Train CoMix...#####
-def train_comix(graph_model, src_data_loader, tgt_data_loader=None, data_loader_eval=None, tubelet_transform, num_iterations=10000):
+def train_comix(graph_model, src_data_loader, tgt_data_loader=None, data_loader_eval=None, tubelet_transform=None, num_iterations=10000):
     # Trainer function
     
     graph_model.train()
