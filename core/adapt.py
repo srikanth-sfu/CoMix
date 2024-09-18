@@ -638,8 +638,8 @@ if __name__ == "__main__":
     num_channels = 3        # Number of color channels (RGB)
     bs = 7
     num_nodes = 16
-    frames = np.random.randint(0, 256, (bs, num_nodes, frame_height, frame_width, num_channels), dtype=np.float32)
-    frames2 = np.random.randint(0, 256, (bs, num_nodes, frame_height, frame_width, num_channels), dtype=np.float32)
+    frames = np.random.randn((bs, num_nodes, frame_height, frame_width, num_channels)).astype('float32')
+    frames2 = np.random.randn((bs, num_nodes, frame_height, frame_width, num_channels)).astype('float32')
 
 
     import ipdb; ipdb.set_trace()
