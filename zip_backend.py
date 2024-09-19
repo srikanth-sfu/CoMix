@@ -78,9 +78,9 @@ class ZipBackend(object):
         self.zip_fmt = zip_fmt
         self.frame_fmt = frame_fmt
 
-    def open(self, video_info, frame_ids=None) -> ZipItem:
+    def open(self, video_info, frame_inds=None) -> ZipItem:
         storage_obj = ZipItem(video_info, self.zip_fmt, self.frame_fmt)
-        return self.get_single_clip(storage_obj,frame_ids=frame_ids)
+        return self.get_single_clip(storage_obj,frame_inds=frame_inds)
 
     def get_single_clip(self, storage_obj, frame_inds):
         """ Get single video clip according to the video_info query."""
