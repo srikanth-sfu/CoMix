@@ -86,6 +86,5 @@ class ZipBackend(object):
         """ Get single video clip according to the video_info query."""
         if frame_inds is None:
             frame_inds = list(range(storage_obj.__len__()))  
-        assert num_segs == 1
         img_list = storage_obj.get_frame(frame_inds)
         return img_list
