@@ -90,9 +90,9 @@ def transform_tubelet(vid1, vid2, fn):
     out_vid1 = [x[0] for x in vid_samples]
     out_vid2 = [x[1] for x in vid_samples]
     out_vid1 = torch.stack(out_vid1)
-    out_vid1 = out_vid1.reshape(orig_shape)
+    out_vid1 = out_vid1.reshape(orig_shape)#[:,::2]
     out_vid2 = torch.stack(out_vid2)
-    out_vid2 = out_vid2.reshape(orig_shape)
+    out_vid2 = out_vid2.reshape(orig_shape)#[:,::2]
     return out_vid1, out_vid2
 
 #####...Train CoMix...#####
@@ -108,6 +108,9 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
     i3d_online.train()
     i3d_online.cuda()
     i3d_online = nn.DataParallel(i3d_online)
+
+    moco.train()
+    moco = nn.DataParallel(moco)
 
     random.seed(params.manual_seed)
 
@@ -234,18 +237,18 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
         src_tubelet = make_variable(src_tubelet, gpu_id=params.src_gpu_id)
         tgt_tubelet = make_variable(tgt_tubelet, gpu_id=params.tgt_gpu_id)
         
-        mix_ratio = np.random.uniform(0, params.max_gamma)
-
-
-        src_mix_tgt_bg = (feat_src*(1-mix_ratio)) + (bg_tgt.unsqueeze(1)*mix_ratio)
-        tgt_mix_src_bg = (feat_tgt*(1-mix_ratio)) + (bg_src.unsqueeze(1)*mix_ratio)
-
-
-        src_mix_tgt_bg = src_mix_tgt_bg.float()
-        src_mix_tgt_bg = make_variable(src_mix_tgt_bg, gpu_id=params.src_gpu_id)
-        
-        tgt_mix_src_bg = tgt_mix_src_bg.float()
-        tgt_mix_src_bg = make_variable(tgt_mix_src_bg, gpu_id=params.tgt_gpu_id)
+#        mix_ratio = np.random.uniform(0, params.max_gamma)
+#
+#
+#        src_mix_tgt_bg = (feat_src*(1-mix_ratio)) + (bg_tgt.unsqueeze(1)*mix_ratio)
+#        tgt_mix_src_bg = (feat_tgt*(1-mix_ratio)) + (bg_src.unsqueeze(1)*mix_ratio)
+#
+#
+#        src_mix_tgt_bg = src_mix_tgt_bg.float()
+#        src_mix_tgt_bg = make_variable(src_mix_tgt_bg, gpu_id=params.src_gpu_id)
+#        
+#        tgt_mix_src_bg = tgt_mix_src_bg.float()
+#        tgt_mix_src_bg = make_variable(tgt_mix_src_bg, gpu_id=params.tgt_gpu_id)
 
 
         feat_src = make_variable(feat_src, gpu_id=params.src_gpu_id)
@@ -261,16 +264,17 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
         feat_tgt = feat_tgt.reshape(bs*num_nodes, num_c, chunk_size, H, W)
         i3d_feat_tgt = i3d_online(feat_tgt)
 
-
+        
         # src_mix_tgt_bg = src_mix_tgt_bg.reshape(bs*num_nodes, num_c, chunk_size, H, W)
         # i3d_src_mix_tgt_bg = i3d_online(src_mix_tgt_bg)
         # tgt_mix_src_bg = tgt_mix_src_bg.reshape(bs*num_nodes, num_c, chunk_size, H, W)
         # i3d_tgt_mix_src_bg = i3d_online(tgt_mix_src_bg)
 
-        src_tubelet = src_tubelet.reshape(bs*num_nodes, num_c, chunk_size, H, W)
+        src_tubelet = src_tubelet.reshape(int(bs*num_nodes), num_c, chunk_size, H, W)
         i3d_src_tubelet = i3d_online(src_tubelet)
-        tgt_tubelet = tgt_tubelet.reshape(bs*num_nodes, num_c, chunk_size, H, W)
-        i3d_tgt_tubelet = i3d_online(tgt_tubelet)
+        with torch.no_grad():
+            tgt_tubelet = tgt_tubelet.reshape(int(bs*num_nodes), num_c, chunk_size, H, W)
+            i3d_tgt_tubelet = i3d_online(tgt_tubelet)
 
         #------Slow range---------------
         fastRange = np.arange(num_nodes)
@@ -298,9 +302,10 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
         i3d_src_tubelet = i3d_src_tubelet.squeeze(3).squeeze(3)
         i3d_src_tubelet = i3d_src_tubelet.reshape(bs, num_nodes, -1)
 
-        i3d_tgt_tubelet = i3d_tgt_tubelet.squeeze(3).squeeze(3)
-        i3d_tgt_tubelet = i3d_tgt_tubelet.reshape(bs, num_nodes, -1)
-        #---------------------------------
+        with torch.no_grad():
+            i3d_tgt_tubelet = i3d_tgt_tubelet.squeeze(3).squeeze(3)
+            i3d_tgt_tubelet = i3d_tgt_tubelet.reshape(bs, num_nodes, -1)
+       #---------------------------------
         preds_src = graph_model(i3d_feat_src)
         preds_src_slow = graph_model(i3d_feat_src_slow)
         preds_tgt = graph_model(i3d_feat_tgt)
@@ -313,7 +318,8 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
         # preds_tgt_mix_slow = graph_model(i3d_tgt_mix_src_bg_slow)
 
         preds_src_tubelet = graph_model(i3d_src_tubelet)
-        preds_tgt_tubelet = graph_model(i3d_tgt_tubelet)
+        with torch.no_grad():
+            preds_tgt_tubelet = graph_model(i3d_tgt_tubelet)
 
         moco_loss = moco.forward(preds_src_tubelet, preds_tgt_tubelet)["nce_loss"]
         cls_loss = CrossEntropyLabelSmooth(num_classes=num_classes, epsilon=0.1, size_average=False)(preds_src, labels).mean()
@@ -367,7 +373,7 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
         simclr_mod_mix = simclr_mod_src + simclr_mod_tgt
         
         pseudo_cls_loss = torch.tensor(0.0).cuda()
-        loss = cls_loss + (params.lambda_bgm * (simclr_mod_mix)) + (params.lambda_tpl * (sim_clr_loss_tgt)) + (params.lambda_bgm*(moco_loss))
+        loss = cls_loss + (params.lambda_bgm * (simclr_mod_mix)) + (params.lambda_tpl * (sim_clr_loss_tgt))# + (params.lambda_bgm*(moco_loss))
         
         loss.backward()
      
