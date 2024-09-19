@@ -82,13 +82,10 @@ class ZipBackend(object):
         storage_obj = ZipItem(video_info, self.zip_fmt, self.frame_fmt)
         return self.get_single_clip(storage_obj,frame_ids=frame_ids)
 
-    def get_single_clip(self, storage_obj, frame_ids):
+    def get_single_clip(self, storage_obj, frame_inds):
         """ Get single video clip according to the video_info query."""
-        if frame_ids is None:
-            import ipdb; ipdb.set_trace()
-        else:
-            pass    
-        num_segs, clip_len = frame_inds.shape
+        if frame_inds is None:
+            frame_inds = list(range(storage_obj.__len__()))  
         assert num_segs == 1
-        img_list = storage_obj.get_frame(frame_inds.reshape(-1))
+        img_list = storage_obj.get_frame(frame_inds)
         return img_list
