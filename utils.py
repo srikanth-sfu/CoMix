@@ -138,6 +138,6 @@ def test_zip_folder(root_dir, zip_fmt, frame_format):
 
 if __name__ == "__main__":
     root_dir = os.path.join("{}/jester/20bn-jester-v1/".format(os.getenv("SLURM_TMPDIR")))
-    zip_fmt = "{}.zip"
+    zip_fmt = "{}"
     frame_format = "{:05d}.jpg" 
     test_zip_folder(root_dir, zip_fmt, frame_format)
