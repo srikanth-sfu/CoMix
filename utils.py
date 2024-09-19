@@ -11,6 +11,7 @@ import params
 import zipfile
 from typing import Set
 import glob
+from zip_backend import ZipBackend 
 
 
 def print_line():
@@ -127,5 +128,16 @@ def main_select_folders():
     dst = "hmdb_filtered.zip"
     select_folders_zip(tgt_zip, dst, paths=src_list)
 
+
+def test_zip_folder(root_dir, zip_fmt, frame_format):
+    backend = ZipBackend(zip_fmt=zip_fmt, frame_fmt=frame_format, data_dir=root_dir)
+    vids = os.listdir(root_dir)
+    for vid in vids:
+        out = backend.open(vid)
+        import ipdb; ipdb.set_trace()
+
 if __name__ == "__main__":
-    main_select_folders()
+    root_dir = os.path.join("{}/jester/20bn-jester-v1/".format(os.getenv("SLURM_TMPDIR")))
+    zip_fmt = "{}.zip"
+    frame_format = "{:05d}.jpg" 
+    test_zip_folder(root_dir, zip_fmt, frame_format)
