@@ -12,7 +12,7 @@ import zipfile
 from typing import Set
 import glob
 from zip_backend import ZipBackend 
-
+from tar_backend import TarBackend
 
 def print_line():
     print('-'*100)
@@ -144,8 +144,8 @@ def main_zip_test():
     test_zip_folder(root_dir, zip_fmt, frame_format)
 
 
-def test_tar_folder(root_dir, zip_fmt, frame_format):
-    backend = ZipBackend(zip_fmt=zip_fmt, frame_fmt=frame_format, data_dir=root_dir)
+def test_tar_folder(root_dir, tar_fmt, frame_format):
+    backend = TarBackend(tar_fmt=tar_fmt, frame_fmt=frame_format, data_dir=root_dir)
     vids = os.listdir(root_dir)
     for vidid, vid in enumerate(vids):
         if vidid % 100 == 2:
