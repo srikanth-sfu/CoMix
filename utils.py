@@ -155,7 +155,7 @@ def test_tar_folder(root_dir, tar_fmt, frame_format):
 def main_tar_test():
     root_dir = os.path.join("{}/EPIC-KITCHENS/P01/rgb_frames/".format(os.getenv("SLURM_TMPDIR")))
     tar_fmt = "{}"
-    frame_format = "frame_{:10d}.jpg" 
+    frame_format = "frame_{:%10d}.jpg" 
     test_tar_folder(root_dir, tar_fmt, frame_format)
 
 if __name__ == "__main__":
