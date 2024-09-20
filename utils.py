@@ -148,8 +148,7 @@ def test_tar_folder(root_dir, tar_fmt, frame_format):
     backend = TarBackend(tar_fmt=tar_fmt, frame_fmt=frame_format, data_dir=root_dir)
     vids = os.listdir(root_dir)
     for vidid, vid in enumerate(vids):
-        if vidid % 100 == 2:
-            print('Checked {} videos'.format(vidid))
+        print('Checked {} videos'.format(vidid))
         out = backend.open(vid)
 
 def main_tar_test():
