@@ -29,6 +29,15 @@ class TarItem(object):
         namelist = [name for name in namelist if name.endswith('.jpg')]
         return len(namelist)
 
+    def filelist(self):
+        if self.frame_tar_fid is None:
+            self._check_available(self.tar_path)
+            self.frame_tar_fid = tarfile.open(self.tar_path, 'r')
+        namelist = self.frame_tar_fid.getnames()
+        namelist = [name for name in namelist if name.endswith('.jpg')]
+        namelist.sort()
+        return namelist
+
     def close(self):
         if self.frame_tar_fid is not None:
             self.frame_tar_fid.close()
@@ -46,9 +55,9 @@ class TarItem(object):
         if self.frame_tar_fid is None:
             self._check_available(self.tar_path)
             self.frame_tar_fid = tarfile.open(self.tar_path, 'r')
-
+        filelist = self.filelist()
         for idx in indices:
-            file_name = self.frame_fmt.format(int(idx) + 1)
+            file_name = filelist[idx]
             img = self.load_image_from_tar(self.frame_tar_fid, file_name, cv2.IMREAD_COLOR)
             img_list.append(img)
         return img_list
