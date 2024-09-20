@@ -44,7 +44,10 @@ def video_to_tensor(pic):
 
 def load_frame(frame_file, resize=False):
 
-    data = Image.open(frame_file)
+	if isintance(frame_file, str):
+    	data = Image.open(frame_file)
+	else:
+		data = frame_file
 
     if resize:
         data = data.resize((224, 224), Image.ANTIALIAS)
@@ -66,8 +69,9 @@ def load_rgb_batch(frames_dir, rgb_files, frame_indices, resize=False):
 
     for i in range(frame_indices.shape[0]):
             #print("Loading frame : ", os.path.join(frames_dir,rgb_files[frame_indices[i]]))
-            batch_data[i,:,:,:] = load_frame(os.path.join(frames_dir, 
-                rgb_files[frame_indices[i]]), resize)
+			batch_data[i,:,:,:] = load_frame(os.path.join(frames_dir, 
+				rgb_files[frame_indices[i]]), resize)
+				
     return batch_data
 
 class VideoDataset_EpicKitchens(Dataset):
@@ -86,6 +90,7 @@ class VideoDataset_EpicKitchens(Dataset):
 
 	'''
 	def __init__(self, csv_file, frequency = 4, num_nodes = 16, is_test = False, transform = None, base_dir='./data/epic_kitchens'):
+		#base_dir = os.path.join("{}/EPIC-KITCHENS/P01/".format(os.getenv("SLURM_TMPDIR")))
 		self.transform = transform
 		with open(csv_file, 'rb') as f:
 			dataset_pd = pickle.load(f)
@@ -96,6 +101,9 @@ class VideoDataset_EpicKitchens(Dataset):
 		self.video_id = dataset_pd["video_id"].to_numpy()
 		self.verb_class = dataset_pd["verb_class"].to_numpy()
 
+		tar_fmt = "rgb_frames/{}"
+		frame_format = "frame_{:010d}.jpg" 
+		self.backend = TarBackend(tar_fmt=tar_fmt, frame_fmt=frame_format, data_dir=base_dir)
 		self.min_frames = 72
 		self.frequency = frequency
 		self.chunk_size = 8
@@ -122,23 +130,16 @@ class VideoDataset_EpicKitchens(Dataset):
 		return len(self.uid)
 
 	def __getitem__(self, idx) :
-		path = self.video_dir + self.video_id[idx]
+		path = str(self.video_id[idx])
 		label = self.verb_class[idx] 
 		if not self.is_test:
 			bg_path = path.replace("epic_kitchens_videos", "epic_kitchens_BG") + "_" + str(self.uid[idx])
 			bg_rgb_files = [i for i in os.listdir(bg_path)]
 			bg_rgb_files.sort()
 			bg_frame_indices = np.arange(len(bg_rgb_files))
-
-		rgb_files = [i for i in os.listdir(path)]
-		rgb_files.sort()
-		rgb_files = rgb_files[self.start_frame[idx]:self.stop_frame[idx]]
-
-		frame_indices = np.arange(len(rgb_files))
-		num_frames = len(rgb_files)
-		if num_frames == 0:
-			print("No images found inside the directory : ", path)
-			raise Exception
+		rgb_frames = backend.open(vid, list(range(self.start_frame[idx],self.stop_frame[idx])))
+		frame_indices = np.arange(len(rgb_frames))
+		num_frames = len(rgb_frames)
 		frames_tensor = load_rgb_batch(path, rgb_files, frame_indices, resize=True)
 		if not self.is_test:
 			bg_frames_tensor = load_rgb_batch(bg_path, bg_rgb_files, bg_frame_indices, resize=True)
