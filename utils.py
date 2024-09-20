@@ -134,10 +134,25 @@ def test_zip_folder(root_dir, zip_fmt, frame_format):
     vids = os.listdir(root_dir)
     for vid in vids:
         out = backend.open(vid)
-        import ipdb; ipdb.set_trace()
 
-if __name__ == "__main__":
+def main_zip_test():
     root_dir = os.path.join("{}/jester/20bn-jester-v1/".format(os.getenv("SLURM_TMPDIR")))
     zip_fmt = "{}"
     frame_format = "{:05d}.jpg" 
     test_zip_folder(root_dir, zip_fmt, frame_format)
+
+
+def test_tar_folder(root_dir, zip_fmt, frame_format):
+    backend = ZipBackend(zip_fmt=zip_fmt, frame_fmt=frame_format, data_dir=root_dir)
+    vids = os.listdir(root_dir)
+    for vid in vids:
+        out = backend.open(vid)
+
+def main_tar_test():
+    root_dir = os.path.join("{}/jester/20bn-jester-v1/".format(os.getenv("SLURM_TMPDIR")))
+    zip_fmt = "{}"
+    frame_format = "{:05d}.jpg" 
+    test_zip_folder(root_dir, zip_fmt, frame_format)
+
+if __name__ == "__main__":
+    def main_tar_test()
