@@ -159,4 +159,4 @@ def main_tar_test():
     test_tar_folder(root_dir, tar_fmt, frame_format)
 
 if __name__ == "__main__":
-    def main_tar_test()
+    main_tar_test()
