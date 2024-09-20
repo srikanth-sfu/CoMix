@@ -101,9 +101,6 @@ class VideoDataset_EpicKitchens(Dataset):
 		self.video_id = dataset_pd["video_id"].to_numpy()
 		self.verb_class = dataset_pd["verb_class"].to_numpy()
 
-		tar_fmt = "rgb_frames/{}"
-		frame_format = "frame_{:010d}.jpg" 
-		self.backend = TarBackend(tar_fmt=tar_fmt, frame_fmt=frame_format, data_dir=base_dir)
 		self.min_frames = 72
 		self.frequency = frequency
 		self.chunk_size = 8
@@ -111,20 +108,25 @@ class VideoDataset_EpicKitchens(Dataset):
 		self.is_test = is_test
 		if not base_dir.endswith("/"):
 			base_dir += "/"
-		self.video_dir = base_dir + "epic_kitchens_videos/"
+		self.video_dir = base_dir + "EPIC_KITCHENS/"
 		if self.csv_file[:-4].endswith("train"):
-			self.video_dir += "train/"
+			# self.video_dir += "train/"
+			pass
 		else : 
 			assert(self.is_test == True)
-			self.video_dir += "test/"
+			# self.video_dir += "test/"
 		
 		stripped_csv_file = self.csv_file.split("/")[-1]
 		if stripped_csv_file.startswith("D1"):
-			self.video_dir += "D1/"
+			self.video_dir += "P08/"
 		if stripped_csv_file.startswith("D2"):
-			self.video_dir += "D2/"
+			self.video_dir += "P01/"
 		if stripped_csv_file.startswith("D3"):
-			self.video_dir += "D3/"
+			self.video_dir += "P22/"
+		tar_fmt = "rgb_frames/{}"
+		frame_format = "frame_{:010d}.jpg" 
+		self.backend = TarBackend(tar_fmt=tar_fmt, frame_fmt=frame_format, data_dir=self.video_dir)
+		
 
 	def __len__(self):
 		return len(self.uid)
