@@ -17,6 +17,8 @@ import GPUtil
 import time
 import math
 import pickle
+from tar_backend import TarBackend
+from zip_backend import ZipBackend
 
 
 def im2tensor(im, transform=None):
