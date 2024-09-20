@@ -133,6 +133,8 @@ def test_zip_folder(root_dir, zip_fmt, frame_format):
     backend = ZipBackend(zip_fmt=zip_fmt, frame_fmt=frame_format, data_dir=root_dir)
     vids = os.listdir(root_dir)
     for vid in vids:
+        if vidid % 100 == 2:
+            print('Checked {} videos'.format(vidid))
         out = backend.open(vid)
 
 def main_zip_test():
@@ -146,6 +148,8 @@ def test_tar_folder(root_dir, zip_fmt, frame_format):
     backend = ZipBackend(zip_fmt=zip_fmt, frame_fmt=frame_format, data_dir=root_dir)
     vids = os.listdir(root_dir)
     for vid in vids:
+        if vidid % 100 == 2:
+            print('Checked {} videos'.format(vidid))
         out = backend.open(vid)
 
 def main_tar_test():
