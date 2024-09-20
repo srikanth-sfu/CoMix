@@ -149,10 +149,10 @@ def test_tar_folder(root_dir, zip_fmt, frame_format):
         out = backend.open(vid)
 
 def main_tar_test():
-    root_dir = os.path.join("{}/jester/20bn-jester-v1/".format(os.getenv("SLURM_TMPDIR")))
-    zip_fmt = "{}"
-    frame_format = "{:05d}.jpg" 
-    test_zip_folder(root_dir, zip_fmt, frame_format)
+    root_dir = os.path.join("{}/EPIC-KITCHENS/P01/rgb_frames/".format(os.getenv("SLURM_TMPDIR")))
+    tar_fmt = "{}"
+    frame_format = "frame_{:10d}.jpg" 
+    test_tar_folder(root_dir, tar_fmt, frame_format)
 
 if __name__ == "__main__":
     def main_tar_test()
