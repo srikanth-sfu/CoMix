@@ -17,11 +17,11 @@ source activate focal
 cd $SLURM_TMPDIR
 mkdir epic_kitchens
 # D1: P08, D2: P01
-cp /scratch/smuralid/datasets/epic_kitchens_p08.zip $SLURM_TMPDIR/epic_kitchens
-cp /scratch/smuralid/datasets/epic_kitchens_p01.zip $SLURM_TMPDIR/epic_kitchens
+cp /scratch/smuralid/datasets/epic_kitchens/epic_kitchens_d1.zip $SLURM_TMPDIR/epic_kitchens
+cp /scratch/smuralid/datasets/epic_kitchens/epic_kitchens_d2.zip $SLURM_TMPDIR/epic_kitchens
 cd epic_kitchens
-unzip -qq epic_kitchens_p08.zip
-unzip -qq epic_kitchens_p01.zip
+unzip -qq epic_kitchens_d1.zip
+unzip -qq epic_kitchens_d2.zip
 cd $SLURM_TMPDIR
 
 git clone git@github.com:srikanth-sfu/CoMix.git
