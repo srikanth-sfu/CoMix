@@ -12,9 +12,6 @@
 #SBATCH -e /home/smuralid/error/tubelets/comix/ek_d1d2_ws/slurm-%j.err
 
 
-echo "Creating log dir: $SLURM_SUBMIT_DIR"
-mkdir -p $SLURM_SUBMIT_DIR
-
 eval "$(conda shell.bash hook)"
 source activate focal
 cd $SLURM_TMPDIR

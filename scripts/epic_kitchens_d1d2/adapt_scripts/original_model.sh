@@ -11,7 +11,6 @@
 #SBATCH -o /home/smuralid/error/tubelets/comix/ek_d1d2/original_baseline/slurm-%j.out  # Write the log on scratch
 #SBATCH -e /home/smuralid/error/tubelets/comix/ek_d1d2/original_baseline/slurm-%j.err
 
-echo "Creating log dir: $SLURM_SUBMIT_DIR"
 eval "$(conda shell.bash hook)"
 source activate focal
 cd $SLURM_TMPDIR
