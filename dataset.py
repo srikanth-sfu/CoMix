@@ -44,10 +44,10 @@ def video_to_tensor(pic):
 
 def load_frame(frame_file, resize=False):
 
-	if isintance(frame_file, str):
-    	data = Image.open(frame_file)
-	else:
-		data = frame_file
+    if isintance(frame_file, str):
+        data = Image.open(frame_file)
+    else:
+    	data = frame_file
 
     if resize:
         data = data.resize((224, 224), Image.ANTIALIAS)
