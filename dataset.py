@@ -69,9 +69,9 @@ def load_rgb_batch(frames_dir, rgb_files, frame_indices, resize=False):
 
     for i in range(frame_indices.shape[0]):
             #print("Loading frame : ", os.path.join(frames_dir,rgb_files[frame_indices[i]]))
-			batch_data[i,:,:,:] = load_frame(os.path.join(frames_dir, 
-				rgb_files[frame_indices[i]]), resize)
-				
+    		batch_data[i,:,:,:] = load_frame(os.path.join(frames_dir, 
+    			rgb_files[frame_indices[i]]), resize)
+    			
     return batch_data
 
 class VideoDataset_EpicKitchens(Dataset):
