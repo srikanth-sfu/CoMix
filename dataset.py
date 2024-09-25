@@ -328,6 +328,7 @@ class VideoDataset_UCFHMDB(Dataset):
 		
 		start_ind = random.randint(0, frames_tensor.shape[1]-(self.chunk_size**2))
 		frames_tensor_crop = frames_tensor[:, start_ind:start_ind+(self.chunk_size)**2:self.chunk_size]
+		print(frames_tensor_crop.shape)
 
 			
 		ind = [np.arange(start=i*self.frequency, stop=i*self.frequency + self.chunk_size, step=1) for i in fidx]	
