@@ -47,11 +47,10 @@ def load_frame(frame_file, resize=False):
     if isinstance(frame_file, str):
         data = Image.open(frame_file)
     else:
-    	data = frame_file
+    	data = Image.fromarray(frame_file)
 
     if resize:
-		print(data)
-        data = data.resize((224, 224), Image.ANTIALIAS)
+		data = data.resize((224, 224), Image.ANTIALIAS)
 
     data = np.array(data)
     data = data.astype(float)
