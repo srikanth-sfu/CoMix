@@ -296,10 +296,10 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
         # i3d_tgt_mix_src_bg = i3d_tgt_mix_src_bg.squeeze(3).squeeze(3)
         # i3d_tgt_mix_src_bg = i3d_tgt_mix_src_bg.reshape(bs, num_nodes, -1)
         # i3d_tgt_mix_src_bg_slow = i3d_tgt_mix_src_bg[:,slowIds,:]
-        i3d_src_tubelet = i3d_src_tubelet.squeeze(3).squeeze(3).squeeze(3)
+        i3d_src_tubelet = i3d_src_tubelet.squeeze(3).squeeze(3).squeeze(2)
 
         with torch.no_grad():
-            i3d_tgt_tubelet = i3d_tgt_tubelet.squeeze(3).squeeze(3).squeeze(3)
+            i3d_tgt_tubelet = i3d_tgt_tubelet.squeeze(3).squeeze(3).squeeze(2)
        #---------------------------------
         preds_src = graph_model(i3d_feat_src)
         preds_src_slow = graph_model(i3d_feat_src_slow)
