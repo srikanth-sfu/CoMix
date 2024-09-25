@@ -35,7 +35,7 @@ timeout 160m python main.py --manual_seed 1 --dataset_name Epic-Kitchens --src_d
 if [ $? -eq 124 ]; then
   echo "The script timed out after ${MAX_HOURS} hour(s). Restarting..."
   # Call the script itself again with the same configuration
-  cd /project/def-mpederso/smuralid/CoMix
+  cd $SLURM_SUBMIT_DIR
   sbatch scripts/epic_kitchens_d1d2/adapt_scripts/original_model.sh
   # scontrol requeue $SLURM_JOB_ID
 else
