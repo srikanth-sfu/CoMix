@@ -8,8 +8,8 @@
 #SBATCH --nodes=1
 #SBATCH --gres=gpu:4
 #SBATCH --time=0-03:00
-#SBATCH -o /home/smuralid/error/tubelets/comix/slurm-%j.out  # Write the log on scratch
-#SBATCH -e /home/smuralid/error/tubelets/comix/slurm-%j.err
+#SBATCH -o /home/smuralid/error/tubelets/comix/ncl_baseline_ws/slurm-%j.out  # Write the log on scratch
+SBATCH -e /home/smuralid/error/tubelets/comix/ncl_baseline_ws/slurm-%j.err
 eval "$(conda shell.bash hook)"
 source activate focal
 cd $SLURM_TMPDIR
