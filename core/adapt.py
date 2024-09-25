@@ -313,7 +313,7 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
         # preds_tgt_mix_slow = graph_model(i3d_tgt_mix_src_bg_slow)
 
 
-        moco_loss = moco.forward(preds_src_tubelet, preds_tgt_tubelet)["nce_loss"].mean()
+        moco_loss = moco.forward(i3d_src_tubelet, i3d_tgt_tubelet)["nce_loss"].mean()
         cls_loss = CrossEntropyLabelSmooth(num_classes=num_classes, epsilon=0.1, size_average=False)(preds_src, labels).mean()
         
 
