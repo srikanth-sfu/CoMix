@@ -213,9 +213,11 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
         SRC, labels = iter_source.next()
         feat_src = SRC[0]
         bg_src = SRC[1]
+        feat_src_video = SRC[2]
         TGT, _ = iter_target.next()
         feat_tgt = TGT[0]
         bg_tgt = TGT[1]
+        feat_tgt_video = TGT[2]
 
         if params.random_aux=='True':
             random_decider = random.uniform(0, 1)
@@ -228,7 +230,7 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
         else:
             num_slow_nodes = 8
 
-        feat_src_np, feat_tgt_np = feat_src.cpu().numpy(), feat_tgt.cpu().numpy()
+        feat_src_np, feat_tgt_np = feat_src_video.cpu().numpy(), feat_tgt_video.cpu().numpy()
         src_tubelet, tgt_tubelet = transform_tubelet(feat_src_np, feat_tgt_np, tubelet_transform)
 
         src_tubelet = src_tubelet.float()
@@ -237,18 +239,18 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
         src_tubelet = make_variable(src_tubelet, gpu_id=params.src_gpu_id)
         tgt_tubelet = make_variable(tgt_tubelet, gpu_id=params.tgt_gpu_id)
         
-#        mix_ratio = np.random.uniform(0, params.max_gamma)
-#
-#
-#        src_mix_tgt_bg = (feat_src*(1-mix_ratio)) + (bg_tgt.unsqueeze(1)*mix_ratio)
-#        tgt_mix_src_bg = (feat_tgt*(1-mix_ratio)) + (bg_src.unsqueeze(1)*mix_ratio)
-#
-#
-#        src_mix_tgt_bg = src_mix_tgt_bg.float()
-#        src_mix_tgt_bg = make_variable(src_mix_tgt_bg, gpu_id=params.src_gpu_id)
-#        
-#        tgt_mix_src_bg = tgt_mix_src_bg.float()
-#        tgt_mix_src_bg = make_variable(tgt_mix_src_bg, gpu_id=params.tgt_gpu_id)
+    #    mix_ratio = np.random.uniform(0, params.max_gamma)
+
+
+    #    src_mix_tgt_bg = (feat_src*(1-mix_ratio)) + (bg_tgt.unsqueeze(1)*mix_ratio)
+    #    tgt_mix_src_bg = (feat_tgt*(1-mix_ratio)) + (bg_src.unsqueeze(1)*mix_ratio)
+
+
+    #    src_mix_tgt_bg = src_mix_tgt_bg.float()
+    #    src_mix_tgt_bg = make_variable(src_mix_tgt_bg, gpu_id=params.src_gpu_id)
+       
+    #    tgt_mix_src_bg = tgt_mix_src_bg.float()
+    #    tgt_mix_src_bg = make_variable(tgt_mix_src_bg, gpu_id=params.tgt_gpu_id)
 
 
         feat_src = make_variable(feat_src, gpu_id=params.src_gpu_id)
@@ -298,7 +300,7 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
         # i3d_tgt_mix_src_bg = i3d_tgt_mix_src_bg.squeeze(3).squeeze(3)
         # i3d_tgt_mix_src_bg = i3d_tgt_mix_src_bg.reshape(bs, num_nodes, -1)
         # i3d_tgt_mix_src_bg_slow = i3d_tgt_mix_src_bg[:,slowIds,:]
-
+        import ipdb; ipdb.set_trace()
         i3d_src_tubelet = i3d_src_tubelet.squeeze(3).squeeze(3)
         i3d_src_tubelet = i3d_src_tubelet.reshape(bs, num_nodes, -1)
 
