@@ -428,18 +428,6 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
             avg_loss_val = loss_val / len(data_loader_eval)
             avg_acc_val = float(acc_val.cpu().numpy()) / len(data_loader_eval.dataset)
 
-            checkpoint_path_current = os.path.join(params.model_root, "Current-Checkpoint.pt")
-            torch.save({
-                        'iter':itrn+1,
-                        'epoch_number':epoch_number,
-                        'graph':graph_model.state_dict(),
-                        'i3d':i3d_online.state_dict(),
-                        'optimizer':optimizer.state_dict(),
-                        'scheduler':scheduler.state_dict(),
-                        'best_accuracy_yet':best_accuracy_yet,
-                        'best_itrn':best_itrn,
-                        },checkpoint_path_current)
-
             if(best_accuracy_yet <= avg_acc_val):
                 best_accuracy_yet = avg_acc_val
                 best_model_wts = copy.deepcopy(graph_model.state_dict())
@@ -460,6 +448,18 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
                         'best_accuracy_yet':best_accuracy_yet,
                         'best_itrn':best_itrn
                         },checkpoint_path_best)
+
+            checkpoint_path_current = os.path.join(params.model_root, "Current-Checkpoint.pt")
+            torch.save({
+                        'iter':itrn+1,
+                        'epoch_number':epoch_number,
+                        'graph':graph_model.state_dict(),
+                        'i3d':i3d_online.state_dict(),
+                        'optimizer':optimizer.state_dict(),
+                        'scheduler':scheduler.state_dict(),
+                        'best_accuracy_yet':best_accuracy_yet,
+                        'best_itrn':best_itrn,
+                        },checkpoint_path_current)
 
             print('best_acc_yet: ', best_accuracy_yet, ' ( in itrn:', best_itrn, ')...')
             graph_model.train()
