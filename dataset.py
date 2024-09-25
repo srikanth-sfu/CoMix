@@ -50,6 +50,7 @@ def load_frame(frame_file, resize=False):
     	data = frame_file
 
     if resize:
+		print(data)
         data = data.resize((224, 224), Image.ANTIALIAS)
 
     data = np.array(data)
