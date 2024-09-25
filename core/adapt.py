@@ -63,7 +63,6 @@ def simclr_loss(output_fast, output_slow, criterion, labels=None, normalize=True
 
 
 def prepare_tubelet_inputs(vid):
-    vid = vid.reshape(vid.shape[0]*vid.shape[1], *vid.shape[2:])
     return [np.squeeze(x, axis=0) for x in np.split(vid, vid.shape[0], axis=0)]
 
 def apply_transform(vid1, vid2, transform_fn):
