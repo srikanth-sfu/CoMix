@@ -145,7 +145,7 @@ if __name__ == '__main__':
     graph_model = Graph_Model(dataset_name=params.dataset_name)
     graph_model.cuda()
 
-    moco = MoCo(out_channels=graph_model.nclass).cuda()
+    moco = MoCo(out_channels=graph_model.nfeat).cuda()
 
     print("=== Training started for CoMix ===")
     print('TemporalGraph:')

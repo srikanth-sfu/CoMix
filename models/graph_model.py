@@ -16,16 +16,13 @@ class Graph_Model(nn.Module):
 
     def __init__(self, dataset_name=None):
         super(Graph_Model, self).__init__()
-
+        self.nfeat = nfeat
         if(dataset_name=="UCF-HMDB"):
             self.graph = GCN(nfeat=1024, nhid=256, nclass=12, dropout=0.1)
-            self.nclass = 12
         elif(dataset_name=="Jester"):
             self.graph = GCN(nfeat=1024, nhid=256, nclass=7, dropout=0.1)
-            self.nclass = 7
         elif(dataset_name=="Epic-Kitchens"):
             self.graph = GCN(nfeat=1024, nhid=256, nclass=8, dropout=0.1)
-            self.nclass = 8
 
 
     def forward(self, inputs):
