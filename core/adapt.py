@@ -365,7 +365,7 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
         simclr_mod_mix = simclr_mod_src + simclr_mod_tgt
         
         pseudo_cls_loss = torch.tensor(0.0).cuda()
-        loss = cls_loss + (params.lambda_bgm * (simclr_mod_mix)) + (params.lambda_tpl * (sim_clr_loss_tgt))# + (params.lambda_bgm*(moco_loss))
+        loss = cls_loss + (params.lambda_bgm * (simclr_mod_mix)) + (params.lambda_tpl * (sim_clr_loss_tgt)) + (params.lambda_bgm*(moco_loss))
         
         loss.backward()
      
