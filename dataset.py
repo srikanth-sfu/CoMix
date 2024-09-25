@@ -315,6 +315,7 @@ class VideoDataset_UCFHMDB(Dataset):
 		max_num_feats = frames_tensor.shape[1] // self.frequency - math.ceil(self.chunk_size/self.frequency) # ith feature is [i*frequency, i*frequency + chunk_size]	
 		allRange = np.arange(max_num_feats)
 		splitRange = np.array_split(allRange, self.num_nodes)
+		print(max_num_feats, frames_tensor.shape[1], allRange.shape, splitRange)
 		try: 
 			if not self.is_test : 
 				fidx = [np.random.choice(a) for a in splitRange]

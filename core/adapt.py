@@ -271,7 +271,7 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
         # i3d_src_mix_tgt_bg = i3d_online(src_mix_tgt_bg)
         # tgt_mix_src_bg = tgt_mix_src_bg.reshape(bs*num_nodes, num_c, chunk_size, H, W)
         # i3d_tgt_mix_src_bg = i3d_online(tgt_mix_src_bg)
-
+        import ipdb; ipdb.set_trace()
         src_tubelet = src_tubelet.reshape(int(bs*num_nodes), num_c, chunk_size, H, W)
         i3d_src_tubelet = i3d_online(src_tubelet)
         with torch.no_grad():
@@ -300,7 +300,6 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
         # i3d_tgt_mix_src_bg = i3d_tgt_mix_src_bg.squeeze(3).squeeze(3)
         # i3d_tgt_mix_src_bg = i3d_tgt_mix_src_bg.reshape(bs, num_nodes, -1)
         # i3d_tgt_mix_src_bg_slow = i3d_tgt_mix_src_bg[:,slowIds,:]
-        import ipdb; ipdb.set_trace()
         i3d_src_tubelet = i3d_src_tubelet.squeeze(3).squeeze(3)
         i3d_src_tubelet = i3d_src_tubelet.reshape(bs, num_nodes, -1)
 
