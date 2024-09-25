@@ -252,7 +252,7 @@ class VideoDataset_Jester(Dataset):
 			#print("Iteration : ", i, " Chunk indices : ", chunk_ind, frames_tensor[:,chunk_ind,:,:].shape)
 			frames_tensor_chunks[i, :, :, :, :] = frames_tensor[:, chunk_ind, :, :]
 
-		return [frames_tensor_chunks, bg_frames_tensor, frames_tensor], label # List of tensors, label
+		return [frames_tensor_chunks, bg_frames_tensor], label # List of tensors, label
 
 class VideoDataset_UCFHMDB(Dataset):
 	'''
@@ -331,5 +331,5 @@ class VideoDataset_UCFHMDB(Dataset):
 		for chunk_ind, i in zip(ind, range(self.num_nodes)) : 
 			frames_tensor_chunks[i, :, :, :, :] = frames_tensor[:, chunk_ind, :, :]
 
-		return [frames_tensor_chunks, bg_frames_tensor], label # List of tensors, label
+		return [frames_tensor_chunks, bg_frames_tensor, frames_tensor], label # List of tensors, label
 		
