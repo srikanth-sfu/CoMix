@@ -129,7 +129,7 @@ class VideoDataset_EpicKitchens(Dataset):
 		tar_fmt = "rgb_frames/{}"
 		frame_format = "frame_{:010d}.jpg" 
 		self.backend = TarBackend(tar_fmt=tar_fmt, frame_fmt=frame_format, data_dir=self.video_dir)
-		
+		self.base_dir = base_dir
 
 	def __len__(self):
 		return len(self.uid)
