@@ -616,5 +616,5 @@ def warmstart_models(graph_model, i3d_online, src_data_loader, tgt_data_loader=N
 
     save_model(graph_model, "Graph-SourceOnly-Model-Best-{}.pth".format(best_itrn))
     save_model(i3d_online, "I3D-SourceOnly-Model-Best-{}.pth".format(best_itrn))
-
+    os._exit(1)
     return graph_model, i3d_online
