@@ -217,25 +217,31 @@ class VideoDataset_Jester(Dataset):
 		if not base_dir.endswith("/"):
 			base_dir += "/"
 		self.bg_dir = base_dir + "jester_BG/"
-		self.video_dir = base_dir + "jester_videos/"
+		self.video_dir = os.path.join("{}/jester/20bn-jester-v1/".format(os.getenv("SLURM_TMPDIR")))
+		self.bg_dir = os.path.join("{}/jester/jester_BG/".format(os.getenv("SLURM_TMPDIR")))
+    	zip_fmt = "{}"
+    	frame_format = "{:05d}.jpg" 
+		self.backend = ZipBackend(tar_fmt=zip_fmt, frame_fmt=frame_format, data_dir=self.video_dir)
+		self.base_dir = base_dir
+
+		
 	def __len__(self):
 		return len(self.dataset)
 	def __getitem__(self, idx) :
 		path = self.video_dir + str(self.dataset.iloc[idx, 0])
 		label = self.dataset.iloc[idx, 1]
 		bg_path = self.bg_dir + '/' + path.split('/')[-1]
-		rgb_files = [i for i in os.listdir(path)]
+		rgb_frames = self.backend.open(path + '.zip')
 		bg_rgb_files = [i for i in os.listdir(bg_path)]
-		rgb_files.sort()
 		bg_rgb_files.sort()
 
-		frame_indices = np.arange(len(rgb_files))
+		frame_indices = np.arange(len(rgb_frames))
 		bg_frame_indices = np.arange(len(bg_rgb_files))
-		num_frames = len(rgb_files)
+		num_frames = len(rgb_frames)
 		if num_frames == 0:
 			print("No images found inside the directory : ", path)
 			raise Exception
-		frames_tensor = load_rgb_batch(path, rgb_files, frame_indices, resize=True)
+		frames_tensor = load_rgb_batch(path, rgb_frames, frame_indices, resize=True)
 		bg_frames_tensor = load_rgb_batch(bg_path, bg_rgb_files, bg_frame_indices, resize=True)
 
 		if self.transform and not self.is_test : 
