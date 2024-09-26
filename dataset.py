@@ -133,6 +133,7 @@ class VideoDataset_EpicKitchens(Dataset):
 
 	def __len__(self):
 		return len(self.uid)
+	
 
 	def __getitem__(self, idx) :
 		path = str(self.video_id[idx])
@@ -142,8 +143,14 @@ class VideoDataset_EpicKitchens(Dataset):
 		num_frames = len(rgb_frames)
 		frames_tensor = load_rgb_batch(path, rgb_frames, frame_indices, resize=True)
 		if not self.is_test:
-			bg_path = path.replace("epic_kitchens", "epic_kitchens_BG") + "_" + str(self.uid[idx])
-			print(bg_path, path, self.base_dir)
+			if path.startswith("P08"): 
+				person_folder = "epic_kitchens_D1_BG"
+			elif path.startswith("P01"):
+				person_folder = "epic_kitchens_D2_BG"
+			else:
+				person_folder = "epic_kitchens_D3_BG"
+
+			bg_path = os.path.join(self.base_dir, person_folder, str(self.uid[idx]))
 			bg_rgb_files = [i for i in os.listdir(bg_path)]
 			bg_rgb_files.sort()
 			bg_frame_indices = np.arange(len(bg_rgb_files))
