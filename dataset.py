@@ -143,7 +143,7 @@ class VideoDataset_EpicKitchens(Dataset):
 		frames_tensor = load_rgb_batch(path, rgb_frames, frame_indices, resize=True)
 		if not self.is_test:
 			bg_path = path.replace("epic_kitchens", "epic_kitchens_BG") + "_" + str(self.uid[idx])
-			print(bg_path, path)
+			print(bg_path, path, self.base_dir)
 			bg_rgb_files = [i for i in os.listdir(bg_path)]
 			bg_rgb_files.sort()
 			bg_frame_indices = np.arange(len(bg_rgb_files))
