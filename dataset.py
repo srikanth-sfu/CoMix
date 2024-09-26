@@ -227,6 +227,7 @@ class VideoDataset_Jester(Dataset):
 		
 	def __len__(self):
 		return len(self.dataset)
+		
 	def __getitem__(self, idx) :
 		path = self.video_dir + str(self.dataset.iloc[idx, 0])
 		label = self.dataset.iloc[idx, 1]
