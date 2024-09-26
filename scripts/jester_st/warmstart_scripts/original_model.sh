@@ -2,7 +2,7 @@
 # ---------------------------------------------------------------------
 # SLURM script for job resubmission on our clusters. 
 # ---------------------------------------------------------------------
-#SBATCH --job-name=baseline_ek_ws
+#SBATCH --job-name=baseline_jester_ws
 #SBATCH --account=rrg-mpederso
 #SBATCH --mem-per-cpu=64G
 #SBATCH --nodes=1
