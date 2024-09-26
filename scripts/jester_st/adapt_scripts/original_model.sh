@@ -17,12 +17,12 @@ cd $SLURM_TMPDIR
 mkdir jester
 # D1: P08, D2: P01
 cp /scratch/smuralid/datasets/jester/jester_source.zip $SLURM_TMPDIR/jester
-cp /scratch/smuralid/datasets/epic_kitchens/jester_source_BG.zip $SLURM_TMPDIR/jester
-cp /scratch/smuralid/datasets/epic_kitchens/jester_target.zip $SLURM_TMPDIR/jester
-cp /scratch/smuralid/datasets/epic_kitchens/jester_target_BG.zip $SLURM_TMPDIR/jester
+cp /scratch/smuralid/datasets/jester/jester_source_BG.zip $SLURM_TMPDIR/jester
+cp /scratch/smuralid/datasets/jester/jester_target.zip $SLURM_TMPDIR/jester
+cp /scratch/smuralid/datasets/jester/jester_target_BG.zip $SLURM_TMPDIR/jester
 
 
-cd epic_kitchens
+cd jester
 unzip -qq jester_source.zip
 unzip -qq jester_source_BG.zip
 unzip -qq jester_target.zip
