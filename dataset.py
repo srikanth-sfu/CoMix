@@ -219,7 +219,7 @@ class VideoDataset_Jester(Dataset):
 		self.bg_dir = base_dir + "jester_BG/"
 		self.video_dir = os.path.join("{}/jester/20bn-jester-v1/".format(os.getenv("SLURM_TMPDIR")))
 		self.bg_dir = os.path.join("{}/jester/jester_BG/".format(os.getenv("SLURM_TMPDIR")))
-    	zip_fmt = "{}"
+		zip_fmt = "{}"
     	frame_format = "{:05d}.jpg" 
 		self.backend = ZipBackend(tar_fmt=zip_fmt, frame_fmt=frame_format, data_dir=self.video_dir)
 		self.base_dir = base_dir
