@@ -21,7 +21,7 @@ def unzip_ek():
         for mode in modes:
             output_file = os.path.join(output_folder, mode, input_file_no_extn)
             in_args.append((input_file, output_file))
-    pool = Pool(16)
+    pool = Pool(24)
     pool.starmap(unzip_sample, [x for x in in_args])
         
 
