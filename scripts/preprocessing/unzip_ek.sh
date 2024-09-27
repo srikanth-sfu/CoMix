@@ -1,1 +1,1 @@
-python3 unzip.py --dataset ek
+python3 scripts/preprocessing/unzip.py --dataset ek
