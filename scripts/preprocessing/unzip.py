@@ -12,7 +12,7 @@ def unzip_sample(sample, output_folder):
 
 def unzip_ek():
     input_folder = os.path.join(os.getenv("SLURM_TMPDIR"), "epic_kitchens/EPIC-KITCHENS/")
-    output_folder = os.path.join(os.getenv("SLURM_TMPDIR"), "epic_kitchens/frames/")
+    output_folder = os.path.join(os.getenv("SLURM_TMPDIR"), "epic_kitchens/frames_orig/")
     modes = ["train", "test"]
     input_tar_files = glob.glob(f"{input_folder}/*/rgb_frames/*tar")
     in_args = []
