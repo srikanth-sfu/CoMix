@@ -11,11 +11,12 @@ def unzip_sample(sample, output_folder):
     
 
 def unzip_ek():
-    input_folder = os.path.join(os.getenv("SLURM_TMPDIR"), "epic_kitchens/EPIC-KITCHENS/")
+    input_folder = os.path.join(os.getenv("SLURM_TMPDIR"), "epic_kitchens/EPIC-KITCHENS/rgb_frames/")
     output_folder = os.path.join(os.getenv("SLURM_TMPDIR"), "epic_kitchens/frames/")
     modes = ["train", "test"]
     input_tar_files = glob.glob(f"{input_folder}/*/*tar")
     in_args = []
+    print(input_folder, input_tar_files)
     for input_file in input_tar_files:
         input_file_no_extn = os.path.basename(input_file).split(".")[0]
         for mode in modes:
@@ -30,6 +31,5 @@ if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("--dataset", type=str, required=True, help="Dataset to unzip")
     args = parser.parse_args()
-    print(args.dataset)
     if args.dataset == "ek":
         unzip_ek()
