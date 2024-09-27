@@ -30,5 +30,6 @@ if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("--dataset", type=str, required=True, help="Dataset to unzip")
     args = parser.parse_args()
+    print(args.dataset)
     if args.dataset == "ek":
         unzip_ek()
