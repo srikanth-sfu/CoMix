@@ -9,7 +9,7 @@
 #SBATCH --gres=gpu:4
 #SBATCH --time=0-03:00
 #SBATCH -o /home/smuralid/error/tubelets/comix/jester_st/original_baseline_ws/slurm-%j.out  # Write the log on scratch
-#SBATCH -e /home/smuralid/error/tubelets/comix/jester_st/slurm-%j.err
+#SBATCH -e /home/smuralid/error/tubelets/comix/jester_st/original_baseline_ws/slurm-%j.err
 
 
 eval "$(conda shell.bash hook)"
