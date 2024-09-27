@@ -16,7 +16,6 @@ def unzip_ek():
     modes = ["train", "test"]
     input_tar_files = glob.glob(f"{input_folder}/*/rgb_frames/*tar")
     in_args = []
-    print(input_folder, input_tar_files)
     for input_file in input_tar_files:
         input_file_no_extn = os.path.basename(input_file).split(".")[0]
         for mode in modes:
