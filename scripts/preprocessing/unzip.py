@@ -7,7 +7,8 @@ import glob
 def unzip_sample(sample, output_folder):
     os.makedirs(output_folder, exist_ok=True)
     if sample.endswith(".tar"):
-        os.system(f"tar xf {sample} -C {output_folder}")
+        print(f"tar xf {sample} -C {output_folder}")
+        #os.system(f"tar xf {sample} -C {output_folder}")
     
 
 def unzip_ek():
@@ -24,7 +25,8 @@ def unzip_ek():
             in_args.append((input_file, output_file))
 
     for sample in in_args:
-        print(sample)
+        unzip_sample(*sample)
+        
 
 
 if __name__ == "__main__":
