@@ -232,7 +232,7 @@ class VideoDataset_Jester(Dataset):
         path = self.video_dir + str(self.dataset.iloc[idx, 0])
         label = self.dataset.iloc[idx, 1]
         bg_path = self.bg_dir + '/' + path.split('/')[-1]
-        rgb_frames = self.backend.open(path + '.zip')
+        rgb_frames = self.backend.open(os.path.basename(path) + '.zip')
         bg_rgb_files = [i for i in os.listdir(bg_path)]
         bg_rgb_files.sort()
 
