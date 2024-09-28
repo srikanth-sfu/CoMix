@@ -238,18 +238,18 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
         src_tubelet = make_variable(src_tubelet, gpu_id=params.src_gpu_id)
         tgt_tubelet = make_variable(tgt_tubelet, gpu_id=params.tgt_gpu_id)
         
-    #    mix_ratio = np.random.uniform(0, params.max_gamma)
+        mix_ratio = np.random.uniform(0, params.max_gamma)
 
 
-    #    src_mix_tgt_bg = (feat_src*(1-mix_ratio)) + (bg_tgt.unsqueeze(1)*mix_ratio)
-    #    tgt_mix_src_bg = (feat_tgt*(1-mix_ratio)) + (bg_src.unsqueeze(1)*mix_ratio)
+        src_mix_tgt_bg = (feat_src*(1-mix_ratio)) + (bg_tgt.unsqueeze(1)*mix_ratio)
+        tgt_mix_src_bg = (feat_tgt*(1-mix_ratio)) + (bg_src.unsqueeze(1)*mix_ratio)
 
 
-    #    src_mix_tgt_bg = src_mix_tgt_bg.float()
-    #    src_mix_tgt_bg = make_variable(src_mix_tgt_bg, gpu_id=params.src_gpu_id)
+        src_mix_tgt_bg = src_mix_tgt_bg.float()
+        src_mix_tgt_bg = make_variable(src_mix_tgt_bg, gpu_id=params.src_gpu_id)
        
-    #    tgt_mix_src_bg = tgt_mix_src_bg.float()
-    #    tgt_mix_src_bg = make_variable(tgt_mix_src_bg, gpu_id=params.tgt_gpu_id)
+        tgt_mix_src_bg = tgt_mix_src_bg.float()
+        tgt_mix_src_bg = make_variable(tgt_mix_src_bg, gpu_id=params.tgt_gpu_id)
 
 
         feat_src = make_variable(feat_src, gpu_id=params.src_gpu_id)
@@ -266,10 +266,10 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
         i3d_feat_tgt = i3d_online(feat_tgt)
 
         
-        # src_mix_tgt_bg = src_mix_tgt_bg.reshape(bs*num_nodes, num_c, chunk_size, H, W)
-        # i3d_src_mix_tgt_bg = i3d_online(src_mix_tgt_bg)
-        # tgt_mix_src_bg = tgt_mix_src_bg.reshape(bs*num_nodes, num_c, chunk_size, H, W)
-        # i3d_tgt_mix_src_bg = i3d_online(tgt_mix_src_bg)
+        src_mix_tgt_bg = src_mix_tgt_bg.reshape(bs*num_nodes, num_c, chunk_size, H, W)
+        i3d_src_mix_tgt_bg = i3d_online(src_mix_tgt_bg)
+        tgt_mix_src_bg = tgt_mix_src_bg.reshape(bs*num_nodes, num_c, chunk_size, H, W)
+        i3d_tgt_mix_src_bg = i3d_online(tgt_mix_src_bg)
         i3d_src_tubelet = i3d_online(src_tubelet)
         with torch.no_grad():
             i3d_tgt_tubelet = i3d_online(tgt_tubelet)
@@ -289,13 +289,13 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
         i3d_feat_tgt_slow = i3d_feat_tgt[:,slowIds,:]
 
         # bs_2 = bs // 2
-        # i3d_src_mix_tgt_bg = i3d_src_mix_tgt_bg.squeeze(3).squeeze(3)
-        # i3d_src_mix_tgt_bg = i3d_src_mix_tgt_bg.reshape(bs, num_nodes, -1)
-        # i3d_src_mix_tgt_bg_slow = i3d_src_mix_tgt_bg[:,slowIds,:]
+        i3d_src_mix_tgt_bg = i3d_src_mix_tgt_bg.squeeze(3).squeeze(3)
+        i3d_src_mix_tgt_bg = i3d_src_mix_tgt_bg.reshape(bs, num_nodes, -1)
+        i3d_src_mix_tgt_bg_slow = i3d_src_mix_tgt_bg[:,slowIds,:]
 
-        # i3d_tgt_mix_src_bg = i3d_tgt_mix_src_bg.squeeze(3).squeeze(3)
-        # i3d_tgt_mix_src_bg = i3d_tgt_mix_src_bg.reshape(bs, num_nodes, -1)
-        # i3d_tgt_mix_src_bg_slow = i3d_tgt_mix_src_bg[:,slowIds,:]
+        i3d_tgt_mix_src_bg = i3d_tgt_mix_src_bg.squeeze(3).squeeze(3)
+        i3d_tgt_mix_src_bg = i3d_tgt_mix_src_bg.reshape(bs, num_nodes, -1)
+        i3d_tgt_mix_src_bg_slow = i3d_tgt_mix_src_bg[:,slowIds,:]
         i3d_src_tubelet = i3d_src_tubelet.squeeze(3).squeeze(3).squeeze(2)
 
         with torch.no_grad():
@@ -306,11 +306,11 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
         preds_tgt = graph_model(i3d_feat_tgt)
         preds_tgt_slow = graph_model(i3d_feat_tgt_slow)
 
-        # preds_src_mix = graph_model(i3d_src_mix_tgt_bg)
-        # preds_src_mix_slow = graph_model(i3d_src_mix_tgt_bg_slow)
+        preds_src_mix = graph_model(i3d_src_mix_tgt_bg)
+        preds_src_mix_slow = graph_model(i3d_src_mix_tgt_bg_slow)
 
-        # preds_tgt_mix = graph_model(i3d_tgt_mix_src_bg)
-        # preds_tgt_mix_slow = graph_model(i3d_tgt_mix_src_bg_slow)
+        preds_tgt_mix = graph_model(i3d_tgt_mix_src_bg)
+        preds_tgt_mix_slow = graph_model(i3d_tgt_mix_src_bg_slow)
 
         moco_loss = moco.forward(i3d_src_tubelet, i3d_tgt_tubelet)["nce_loss"].mean()
         cls_loss = CrossEntropyLabelSmooth(num_classes=num_classes, epsilon=0.1, size_average=False)(preds_src, labels).mean()
@@ -327,8 +327,8 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
 
 
         virtual_label = torch.arange(0, bs)
-        #virtual_label = torch.cat((virtual_label, virtual_label), dim=0)
-        virtual_label = make_variable(virtual_label)
+        virtual_label = torch.cat((virtual_label, virtual_label), dim=0)
+        #virtual_label = make_variable(virtual_label)
 
         sim_clr_loss_src = simclr_loss(torch.softmax(preds_src, dim=-1), torch.softmax(preds_src_slow, dim=-1),  simclr_loss_criterion, labels)
         if pseudo_mask is None : 
@@ -348,15 +348,13 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
          
         
 
-        # src_fast = torch.cat((preds_src, preds_src_mix), dim=0)
-        # src_slow = torch.cat((preds_src_slow, preds_src_mix_slow), dim=0)
-        src_fast = preds_src
-        src_slow = preds_src_slow
+        src_fast = torch.cat((preds_src, preds_src_mix), dim=0)
+        src_slow = torch.cat((preds_src_slow, preds_src_mix_slow), dim=0)
 
         simclr_mod_src = simclr_loss(torch.softmax(src_fast, dim=-1), torch.softmax(src_slow, dim=-1), simclr_loss_criterion, virtual_label)
 
-        #tgt_fast = torch.cat((preds_tgt, preds_tgt_mix), dim=0)
-        #tgt_slow = torch.cat((preds_tgt_slow, preds_tgt_mix_slow), dim=0)
+        tgt_fast = torch.cat((preds_tgt, preds_tgt_mix), dim=0)
+        tgt_slow = torch.cat((preds_tgt_slow, preds_tgt_mix_slow), dim=0)
         tgt_fast = preds_tgt
         tgt_slow = preds_tgt_slow
         simclr_mod_tgt = simclr_loss(torch.softmax(tgt_fast, dim=-1), torch.softmax(tgt_slow, dim=-1), simclr_loss_criterion, virtual_label)
