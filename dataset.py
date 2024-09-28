@@ -117,7 +117,7 @@ class VideoDataset_EpicKitchens(Dataset):
         else : 
             assert(self.is_test == True)
             self.video_dir += "test/"
-        
+        self.base_dir = base_dir
 
     def __len__(self):
         return len(self.uid)
