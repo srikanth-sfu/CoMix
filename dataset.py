@@ -136,9 +136,10 @@ class VideoDataset_EpicKitchens(Dataset):
             raise Exception
         frames_tensor = load_rgb_batch(path, rgb_files, frame_indices, resize=True)
         if not self.is_test:
-            if path.startswith("P08"): 
+            path_fn = os.path.basename(path)
+            if path_fn.startswith("P08"): 
                 person_folder = "epic_kitchens_D1_BG"
-            elif path.startswith("P01"):
+            elif path_fn.startswith("P01"):
                 person_folder = "epic_kitchens_D2_BG"
             else:
                 person_folder = "epic_kitchens_D3_BG"
