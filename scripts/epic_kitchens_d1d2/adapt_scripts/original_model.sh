@@ -20,7 +20,6 @@ cp /scratch/smuralid/datasets/epic_kitchens/epic_kitchens_d1.zip $SLURM_TMPDIR/e
 cp /scratch/smuralid/datasets/epic_kitchens/epic_kitchens_d2.zip $SLURM_TMPDIR/epic_kitchens
 cp /scratch/smuralid/datasets/epic_kitchens/epic_kitchens_bg.zip $SLURM_TMPDIR/epic_kitchens
 
-
 cd epic_kitchens
 unzip -qq epic_kitchens_d1.zip
 unzip -qq epic_kitchens_d2.zip
@@ -32,6 +31,7 @@ cd CoMix
 git checkout jester_baseline_zip
 bash scripts/preprocessing/unzip_ek.sh
 echo "------------------------------"
+
 timeout 160m python main.py --manual_seed 1 --dataset_name Epic-Kitchens --src_dataset D1 --tgt_dataset D2 \ 
 --batch_size 8 --model_root /scratch/smuralid/checkpoints/da/epic_kitchens_d1d2/original_baseline/ \
 --save_in_steps 500 --log_in_steps 50 --eval_in_steps 50 --pseudo_threshold 0.7 --warmstart_models True \
