@@ -111,37 +111,30 @@ class VideoDataset_EpicKitchens(Dataset):
         self.is_test = is_test
         if not base_dir.endswith("/"):
             base_dir += "/"
-        self.video_dir = base_dir + "EPIC-KITCHENS/"
+        self.video_dir = base_dir + "frames/"
         if self.csv_file[:-4].endswith("train"):
-            # self.video_dir += "train/"
-            pass
+            self.video_dir += "train/"
         else : 
             assert(self.is_test == True)
-            # self.video_dir += "test/"
+            self.video_dir += "test/"
         
-        stripped_csv_file = self.csv_file.split("/")[-1]
-        if stripped_csv_file.startswith("D1"):
-            self.video_dir += "P08/"
-        if stripped_csv_file.startswith("D2"):
-            self.video_dir += "P01/"
-        if stripped_csv_file.startswith("D3"):
-            self.video_dir += "P22/"
-        tar_fmt = "rgb_frames/{}"
-        frame_format = "frame_{:010d}.jpg" 
-        self.backend = TarBackend(tar_fmt=tar_fmt, frame_fmt=frame_format, data_dir=self.video_dir)
-        self.base_dir = base_dir
 
     def __len__(self):
         return len(self.uid)
     
 
     def __getitem__(self, idx) :
-        path = str(self.video_id[idx])
+        path = self.video_dir + self.video_id[idx]
         label = self.verb_class[idx] 
-        rgb_frames = self.backend.open(path + '.tar', list(range(self.start_frame[idx],self.stop_frame[idx])))
-        frame_indices = np.arange(len(rgb_frames))
-        num_frames = len(rgb_frames)
-        frames_tensor = load_rgb_batch(path, rgb_frames, frame_indices, resize=True)
+        rgb_files = [i for i in os.listdir(path)]
+        rgb_files.sort()
+        rgb_files = rgb_files[self.start_frame[idx]:self.stop_frame[idx]]
+        frame_indices = np.arange(len(rgb_files))
+        num_frames = len(rgb_files)
+        if num_frames == 0:
+            print("No images found inside the directory : ", path)
+            raise Exception
+        frames_tensor = load_rgb_batch(path, rgb_files, frame_indices, resize=True)
         if not self.is_test:
             if path.startswith("P08"): 
                 person_folder = "epic_kitchens_D1_BG"
