@@ -33,7 +33,7 @@ bash scripts/preprocessing/unzip_ek.sh
 echo "------------------------------"
 
 timeout 150m python main.py --manual_seed 1 --dataset_name Epic-Kitchens --src_dataset D1 --tgt_dataset D2 \
-        --batch_size 8 --model_root /scratch/smuralid/checkpoints/da/epic_kitchens_d1d2/original_baseline/ \
+        --batch_size 7 --model_root /scratch/smuralid/checkpoints/da/epic_kitchens_d1d2/original_baseline/ \
         --save_in_steps 500 --log_in_steps 50 --eval_in_steps 50 --pseudo_threshold 0.7 --warmstart_models True \
         --num_iter_warmstart 4000 --num_iter_adapt 10000 --learning_rate 0.01 --learning_rate_ws 0.01 --lambda_bgm 0.01 \
         --lambda_tpl 0.01 --base_dir $SLURM_TMPDIR/epic_kitchens/ \
