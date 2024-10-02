@@ -235,6 +235,7 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
 
         feat_src_np, feat_tgt_np = feat_src_video.cpu().numpy(), feat_tgt_video.cpu().numpy()
         src_tubelet, tgt_tubelet = transform_tubelet(feat_src_np, feat_tgt_np, tubelet_transform)
+        print(src_tubelet.shape, tgt_tubelet.shape)
 
         src_tubelet = src_tubelet.float()
         tgt_tubelet = tgt_tubelet.float()
