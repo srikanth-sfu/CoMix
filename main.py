@@ -96,7 +96,7 @@ if __name__ == '__main__':
             dict(
                 type='GroupToTensor',
                 switch_rgb_channels=False,
-                div255=False,
+                div255=True,
                 mean=None,
                 std=None
             )

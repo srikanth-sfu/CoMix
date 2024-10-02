@@ -63,7 +63,8 @@ def simclr_loss(output_fast, output_slow, criterion, labels=None, normalize=True
 
 
 def prepare_tubelet_inputs(vid):
-    return [np.squeeze(x, axis=0) for x in np.split(vid, vid.shape[0], axis=0)]
+    #data2 = (((data1 + 1) * 255) / 2).astype('uint8')
+    return [(((np.squeeze(x, axis=0)+1)*255)/2).astype('uint8') for x in np.split(vid, vid.shape[0], axis=0)]
 
 def apply_transform(vid1, vid2, transform_fn):
     vid1 = [np.squeeze(x, axis=1).transpose(1,2,0) for x in np.split(vid1, vid1.shape[1], axis=1)]
@@ -77,6 +78,9 @@ def apply_transform(vid1, vid2, transform_fn):
     vid1 = vid_tensor[0:clip_len,:,:,:].permute(1, 0, 2, 3).contiguous()
     vid2 = vid_tensor[clip_len:,:,:,:].permute(1, 0, 2, 3).contiguous()
     
+    vid1.mul_(2).sub_(1)
+    vid2.mul_(2).sub_(1)
+
     return vid1, vid2
 
 def transform_tubelet(vid1, vid2, fn):
@@ -231,6 +235,7 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
 
         feat_src_np, feat_tgt_np = feat_src_video.cpu().numpy(), feat_tgt_video.cpu().numpy()
         src_tubelet, tgt_tubelet = transform_tubelet(feat_src_np, feat_tgt_np, tubelet_transform)
+        print(feat_src_np.max(), feat_src_np.min(), src_tubelet.max(), src_tubelet.min())
 
         src_tubelet = src_tubelet.float()
         tgt_tubelet = tgt_tubelet.float()
@@ -361,7 +366,7 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
         simclr_mod_mix = simclr_mod_src + simclr_mod_tgt
         
         pseudo_cls_loss = torch.tensor(0.0).cuda()
-        loss = cls_loss + (params.lambda_bgm * (simclr_mod_mix)) + (params.lambda_tpl * (sim_clr_loss_tgt)) + (params.lambda_bgm*(moco_loss))
+        loss = cls_loss + (params.lambda_bgm * (simclr_mod_mix)) + (params.lambda_tpl * (sim_clr_loss_tgt)) + (params.lambda_bgm*0.1*(moco_loss))
         
         loss.backward()
      
