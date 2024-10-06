@@ -8,6 +8,7 @@ import argparse
 import os
 from tubelets import build_transform
 from core import MoCo 
+import json
 
 parser = argparse.ArgumentParser(description='All arguments for the program.')
 
@@ -38,6 +39,7 @@ parser.add_argument('--random_aux', type=str, default='True', help='Random Aux.'
 parser.add_argument('--lambda_bgm', type=float, default=0.1, help='Coefficient to multiply the BGM loss.')
 parser.add_argument('--max_gamma', type=float, default=0.5, help='Max value of Gamma for MixUp.')
 parser.add_argument('--base_dir', type=str, default='./data', help='Base directory for data.')
+parser.add_argument('--tubelet_config', type=str, default="", help='Tubelet config file.')
 
 args = parser.parse_args()
 
@@ -74,34 +76,41 @@ if __name__ == '__main__':
     params.base_dir = args.base_dir
 
     print(args)
-
-    tubelet_params=[
-            dict(
-                type='Tubelets',
-                region_sampler=dict(
-                    scales=[32, 48, 56, 64, 96, 128],
-                    ratios=[0.5, 0.67, 0.75, 1.0, 1.33, 1.50, 2.0],
-                    scale_jitter=0.18,
-                    num_rois=2,
-                ),
-                key_frame_probs=[0.5, 0.3, 0.2],
-                loc_velocity=5,
-                rot_velocity=6,
-                shear_velocity=0.066,
-                size_velocity=0.0001,
-                label_prob=1.0,
-                motion_type='gaussian',
-                patch_transformation='none',
-            ),
-            dict(
-                type='GroupToTensor',
-                switch_rgb_channels=False,
-                div255=True,
-                mean=None,
-                std=None
-            )
-        ]
+    tubelet_params = [
+                dict(
+                    type='GroupToTensor',
+                    switch_rgb_channels=False,
+                    div255=True,
+                    mean=None,
+                    std=None
+                )
+    ]
+    if not args.tubelet_config:
+        tubelet_params1=[
+                dict(
+                    type='Tubelets',
+                    region_sampler=dict(
+                        scales=[32, 48, 56, 64, 96, 128],
+                        ratios=[0.5, 0.67, 0.75, 1.0, 1.33, 1.50, 2.0],
+                        scale_jitter=0.18,
+                        num_rois=2,
+                    ),
+                    key_frame_probs=[0.5, 0.3, 0.2],
+                    loc_velocity=5,
+                    rot_velocity=6,
+                    shear_velocity=0.066,
+                    size_velocity=0.0001,
+                    label_prob=1.0,
+                    motion_type='gaussian',
+                    patch_transformation='none',
+                )
+            ]
+    else:
+        with(open(args.tubelet_config, 'r')) as tconfig:
+            tubelet_params1 = json.load(open(tconfig))
+        params.base_dir += ("_" + args.tubelet_config.split(".")[0])
     
+    tubelet_params = tubelet_params1 + tubelet_params
     tubelet_transform = build_transform(tubelet_params)
 
 
