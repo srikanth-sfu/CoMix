@@ -112,7 +112,7 @@ if __name__ == '__main__':
         params.model_root += ("_" + os.path.basename(args.tubelet_config.split(".")[0]))
     
     tubelet_params = tubelet_params1 + tubelet_params
-    print(tubelet_params)
+    print(json.dumps(tubelet_params, indent=4))
     tubelet_transform = build_transform(tubelet_params)
 
 
