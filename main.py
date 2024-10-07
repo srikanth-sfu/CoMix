@@ -109,7 +109,9 @@ if __name__ == '__main__':
     else:
         with(open(args.tubelet_config, 'r')) as tconfig:
             tubelet_params1 = [json.load(tconfig)]
-        params.model_root += ("_" + os.path.basename(args.tubelet_config.split(".")[0]))
+        if params.model_root.endswith("/"):
+            params.model_root = params.model_root[:-1]
+        params.model_root += ("_" + os.path.basename(args.tubelet_config.split(".")[0])) + '/'
     
     tubelet_params = tubelet_params1 + tubelet_params
     print(json.dumps(tubelet_params, indent=4))
