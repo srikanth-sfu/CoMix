@@ -107,7 +107,7 @@ if __name__ == '__main__':
             ]
     else:
         with(open(args.tubelet_config, 'r')) as tconfig:
-            tubelet_params1 = json.load(tconfig)
+            tubelet_params1 = [json.load(tconfig)]
         params.base_dir += ("_" + args.tubelet_config.split(".")[0])
     
     tubelet_params = tubelet_params1 + tubelet_params
