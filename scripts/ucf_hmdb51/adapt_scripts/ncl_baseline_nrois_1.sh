@@ -2,7 +2,7 @@
 # ---------------------------------------------------------------------
 # SLURM script for job resubmission on our clusters. 
 # ---------------------------------------------------------------------
-#SBATCH --job-name=ncl_baseline_video
+#SBATCH --job-name=nrois_1
 #SBATCH --account=rrg-mpederso
 #SBATCH --mem-per-cpu=64G
 #SBATCH --nodes=1
@@ -29,7 +29,7 @@ if [ $? -eq 124 ]; then
   echo "The script timed out after ${MAX_HOURS} hour(s). Restarting..."
   # Call the script itself again with the same configuration
   cd $SLURM_SUBMIT_DIR
-  sbatch scripts/ucf_hmdb51/adapt_scripts/ncl_baseline.sh
+  sbatch scripts/ucf_hmdb51/adapt_scripts/ncl_baseline_nrois_1.sh
   # scontrol requeue $SLURM_JOB_ID
 else
   echo "Script completed before timeout"

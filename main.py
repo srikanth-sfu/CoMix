@@ -86,6 +86,7 @@ if __name__ == '__main__':
                 )
     ]
     if not args.tubelet_config:
+        print("Using default tubelet setting")
         tubelet_params1=[
                 dict(
                     type='Tubelets',
@@ -108,7 +109,7 @@ if __name__ == '__main__':
     else:
         with(open(args.tubelet_config, 'r')) as tconfig:
             tubelet_params1 = [json.load(tconfig)]
-        params.model_root += ("_" + args.tubelet_config.split(".")[0])
+        params.model_root += ("_" + os.path.basename(args.tubelet_config.split(".")[0]))
     
     tubelet_params = tubelet_params1 + tubelet_params
     tubelet_transform = build_transform(tubelet_params)

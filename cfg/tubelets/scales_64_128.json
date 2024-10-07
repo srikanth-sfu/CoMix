@@ -2,8 +2,8 @@
     "type": "Tubelets",
     "region_sampler": {
         "scales": [
-            32,
-            48
+            64,
+            128
         ],
         "ratios": [
             0.5,

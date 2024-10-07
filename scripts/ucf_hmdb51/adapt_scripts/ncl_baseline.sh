@@ -2,7 +2,7 @@
 # ---------------------------------------------------------------------
 # SLURM script for job resubmission on our clusters. 
 # ---------------------------------------------------------------------
-#SBATCH --job-name=ncl_baseline_video
+#SBATCH --job-name=notransform
 #SBATCH --account=rrg-mpederso
 #SBATCH --mem-per-cpu=64G
 #SBATCH --nodes=1
