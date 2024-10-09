@@ -546,9 +546,10 @@ def pretrain_backbone(graph_model, i3d_online, moco, src_data_loader, tgt_data_l
         print("\rRunning Iteration (pretrain) : {}/{}".format(itrn, num_iterations), end='', flush=True)
         if itrn%100 == 0:
             print('Itrn: (T)', itrn+1, 'LR:', scheduler.get_lr())
-
+        
         if itrn==start_iter:
             iter_source = iter(src_data_loader)
+            iter_target = iter(tgt_data_loader)
 
         if itrn % len_source_data_loader == 0:
             iter_source = iter(src_data_loader)
