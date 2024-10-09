@@ -22,7 +22,7 @@ cd $SLURM_TMPDIR
 
 git clone git@github.com:srikanth-sfu/CoMix.git
 cd CoMix
-git checkout tubelet_contrast_comix_no_transformation
+git checkout tubelet_contrast_comix_pretrain_adapt
 echo "------------------------------"
 timeout 170m python main.py --manual_seed 1 --auto_resume True --dataset_name UCF-HMDB \
  --src_dataset UCF --tgt_dataset HMDB --batch_size 7 \
