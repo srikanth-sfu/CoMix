@@ -40,6 +40,11 @@ parser.add_argument('--lambda_bgm', type=float, default=0.1, help='Coefficient t
 parser.add_argument('--max_gamma', type=float, default=0.5, help='Max value of Gamma for MixUp.')
 parser.add_argument('--base_dir', type=str, default='./data', help='Base directory for data.')
 parser.add_argument('--tubelet_config', type=str, default="", help='Tubelet config file.')
+parser.add_argument('--pretrain_graph', type=str, default='None', help='Load checkpoints from.')
+parser.add_argument('--pretrain_i3d', type=str, default='None', help='Load checkpoints from.')
+parser.add_argument('--checkpoint_path_pretrain', type=str, default='./pretrain_checkpoints', help='Load pretrain checkpoints from.')
+
+
 
 args = parser.parse_args()
 
@@ -74,6 +79,9 @@ if __name__ == '__main__':
     params.lambda_bgm = args.lambda_bgm
     params.max_gamma = args.max_gamma
     params.base_dir = args.base_dir
+    params.checkpoint_path_pretrain = args.checkpoint_path_pretrain
+    params.pretrain_i3d = args.pretrain_i3d
+    params.pretrain_graph = args.pretrain_graph
 
     print(args)
     tubelet_params = [

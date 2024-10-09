@@ -181,6 +181,29 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
             graph_model.load_state_dict(torch.load(params.warmstart_graph))
             i3d_online.load_state_dict(torch.load(params.warmstart_i3d))
             print('Warmstarted successfully...')
+        
+        if params.pretrain_graph == "None" or params.pretrain_i3d == "None": 
+            print('Starting Training for pretraining...')
+            checkpoint_path_pretrain = os.path.join(params.checkpoint_path_pretrain, "Current-Checkpoint.pt")
+            if os.path.exists(checkpoint_path_pretrain):
+                print("Loading pretrain checkpoint")
+                checkpoint_pretrain = torch.load(checkpoint_path_pretrain)
+                start_iter_pretrain = checkpoint_pretrain["iter"]
+                epoch_number_pretrain = checkpoint_pretrain["epoch_number"]
+                graph_model.load_state_dict(checkpoint_pretrain["graph"])
+                i3d_online.load_state_dict(checkpoint_pretrain["i3d"])
+                print("Resuming pretraining from itrn: ", start_iter_pretrain) 
+            else:
+                start_iter_pretrain, epoch_number_pretrain, checkpoint_pretrain = 0, 0, None
+                os.makedirs(os.path.dirname(checkpoint_path_pretrain), exist_ok=True)
+            graph_model, i3d_online = pretrain_backbone(graph_model, i3d_online, moco, src_data_loader, tgt_data_loader, data_loader_eval, params.num_iter_warmstart, start_iter_pretrain, epoch_number_pretrain, checkpoint_pretrain)            
+            print('Pretrained successfully...')
+        else:
+            print('Loading pretrained model...')
+            graph_model.load_state_dict(torch.load(params.pretrain_graph))
+            i3d_online.load_state_dict(torch.load(params.pretrain_i3d))
+            print('Pretrained model loaded successfully...')
+
 
     if params.auto_resume=='True':
         checkpoint_path = os.path.join(params.model_root, "Current-Checkpoint.pt")
@@ -365,7 +388,7 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
         simclr_mod_mix = simclr_mod_src + simclr_mod_tgt
         
         pseudo_cls_loss = torch.tensor(0.0).cuda()
-        loss = cls_loss + (params.lambda_bgm * (simclr_mod_mix)) + (params.lambda_tpl * (sim_clr_loss_tgt)) + (params.lambda_tpl*0.1*(moco_loss))
+        loss = cls_loss + (params.lambda_bgm * (simclr_mod_mix)) + (params.lambda_tpl * (sim_clr_loss_tgt)) # +  (params.lambda_tpl*0.1*(moco_loss))
         
         loss.backward()
      
@@ -483,6 +506,156 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
 
     return graph_model
 
+def pretrain_backbone(graph_model, i3d_online, moco, src_data_loader, tgt_data_loader=None, data_loader_eval=None, num_iterations=10000, start_iter=0, epoch_number=0, checkpoint=None):
+    # Trainer function
+    
+    optimizer = optim.SGD([{"params": i3d_online.parameters(), "lr": params.learning_rate_ws * 0.1}],
+                            lr=params.learning_rate,
+                            weight_decay=0.0000001,
+                            momentum=params.momentum )
+    
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, float(num_iterations))
+
+    if start_iter != 0:
+        optimizer.load_state_dict(checkpoint["optimizer"])
+        scheduler.load_state_dict(checkpoint["scheduler"])
+        best_loss = checkpoint["best_loss"]
+        best_itrn = checkpoint["best_itrn"]
+    else:
+        best_loss = float('inf')
+        best_itrn = 0
+
+    len_source_data_loader = len(src_data_loader) - 1 
+
+    print_line()
+    print('len_source_data_loader = '+ str(len_source_data_loader))
+
+
+    best_model_wts = copy.deepcopy(graph_model.state_dict())
+    best_i3d_model_wts = copy.deepcopy(i3d_online.state_dict())
+
+    print_line()
+    print_line()
+    print_line()
+
+    start_time = time.process_time()
+    running_lr = params.learning_rate
+
+    if not os.path.exists(params.model_root):
+        os.makedirs(params.model_root)
+
+    total_loss = 0.
+
+    for itrn in range(start_iter, num_iterations):
+        print("\rRunning Iteration (pretrain) : {}/{}".format(itrn, num_iterations), end='', flush=True)
+        if itrn%100 == 0:
+            print('Itrn: (T)', itrn+1, 'LR:', scheduler.get_lr())
+
+        if itrn==start_iter:
+            iter_source = iter(src_data_loader)
+
+        if itrn % len_source_data_loader == 0:
+            iter_source = iter(src_data_loader)
+            epoch_number = epoch_number + 1
+        
+        if itrn % len_target_data_loader == 0:            
+            iter_target = iter(tgt_data_loader)
+
+        SRC, labels = iter_source.next()
+        feat_src_video = SRC[2]
+        feat_tgt_video = TGT[2]
+
+        feat_src_np, feat_tgt_np = feat_src_video.cpu().numpy(), feat_tgt_video.cpu().numpy()
+        src_tubelet, tgt_tubelet = transform_tubelet(feat_src_np, feat_tgt_np, tubelet_transform)
+
+        src_tubelet = src_tubelet.float()
+        tgt_tubelet = tgt_tubelet.float()
+
+        src_tubelet = make_variable(src_tubelet, gpu_id=params.src_gpu_id)
+        tgt_tubelet = make_variable(tgt_tubelet, gpu_id=params.tgt_gpu_id)
+
+        i3d_src_tubelet = i3d_online(src_tubelet)
+        with torch.no_grad():
+            i3d_tgt_tubelet = i3d_online(tgt_tubelet)
+
+        i3d_src_tubelet = i3d_src_tubelet.squeeze(3).squeeze(3).squeeze(2)
+
+        with torch.no_grad():
+            i3d_tgt_tubelet = i3d_tgt_tubelet.squeeze(3).squeeze(3).squeeze(2)
+
+        optimizer.zero_grad()
+
+        bs, num_c, chunk_size, H, W = src_tubelet.shape
+        moco_loss = moco.forward(i3d_src_tubelet, i3d_tgt_tubelet)["nce_loss"].mean()        
+        loss = moco_loss * 0.01
+        
+        loss.backward()
+     
+        optimizer.step()
+        
+        scheduler.step()
+
+        total_loss += loss.data.item()
+
+        # Log updates.
+        if ((itrn + 1) % params.log_in_steps == 0):
+            print_line()
+            print("Iteration (T) [{}/{}]: cls_loss={}"
+                  .format(itrn + 1,
+                          num_iterations,
+                          (total_loss.item()/params.eval_in_steps)
+                          ))
+            print_line()
+            print_line()
+        if ((itrn + 1) % params.eval_in_steps == 0):
+            if(best_loss > total_loss):
+                best_accuracy_yet = avg_acc_val
+                best_model_wts = copy.deepcopy(graph_model.state_dict())
+                best_i3d_model_wts = copy.deepcopy(i3d_online.state_dict())
+
+                save_model_pretrain(graph_model, "Graph-SourceOnly-Model-Best.pth")
+                save_model_pretrain(i3d_online, "I3D-SourceOnly-Online-Model-Best.pth")
+
+                best_itrn = itrn + 1
+                
+                checkpoint_path_current = os.path.join(params.checkpoint_path_pretrain, "Current-Checkpoint.pt")
+                torch.save({
+                            'iter':itrn+1,
+                            'epoch_number':epoch_number,
+                            'graph':graph_model.state_dict(),
+                            'i3d':i3d_online.state_dict(),
+                            'optimizer':optimizer.state_dict(),
+                            'scheduler':scheduler.state_dict(),
+                            'best_loss':best_loss,
+                            'best_itrn':best_itrn
+                            },checkpoint_path_current)
+                print("save current warmstart checkpoint to: {}".format(os.path.join(params.model_root, checkpoint_path_current)))
+
+                print('best_loss: ', best_loss, ' ( in itrn:', best_itrn, ')...')
+                graph_model.train()
+                i3d_online.train()
+                print_line()
+
+                end_time_eval = time.process_time()
+
+            total_loss = 0.
+
+    # Load the best models and save them.
+    best_model_wts_path = os.path.join(params.checkpoint_path_pretrain, "Graph-SourceOnly-Model-Best.pth")
+    best_i3d_model_wts_path = os.path.join(params.checkpoint_path_pretrain, "I3D-SourceOnly-Online-Model-Best.pth")
+    print('Loading the best model weights from: ', best_model_wts_path, best_i3d_model_wts_path)
+
+
+    best_model_wts = torch.load(best_model_wts_path)
+    best_i3d_model_wts = torch.load(best_i3d_model_wts_path)
+
+    graph_model.load_state_dict(best_model_wts)
+    i3d_online.load_state_dict(best_i3d_model_wts)
+
+    save_model(graph_model, "Graph-SourceOnly-Model-Best-{}.pth".format(best_itrn))
+    save_model(i3d_online, "I3D-SourceOnly-Model-Best-{}.pth".format(best_itrn))
+
+    return graph_model, i3d_online
 
 
 def warmstart_models(graph_model, i3d_online, src_data_loader, tgt_data_loader=None, data_loader_eval=None, num_iterations=10000, start_iter=0, epoch_number=0, checkpoint=None):

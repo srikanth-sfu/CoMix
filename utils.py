@@ -74,6 +74,14 @@ def save_model_warmstart(net, filename):
     print("save pretrained model to: {}".format(
         os.path.join(params.warmstart_graph_checkpoint, filename)))
 
+def save_model_pretrain(net, filename):
+    """Save trained warmstart model."""
+    if not os.path.exists(params.checkpoint_path_pretrain):
+        os.makedirs(params.checkpoint_path_pretrain)
+    torch.save(net.state_dict(),
+               os.path.join(params.checkpoint_path_pretrain, filename))
+    print("save pretrained model to: {}".format(
+        os.path.join(params.checkpoint_path_pretrain, filename)))
 
 class SrcFiles:
     def __init__(self, type, value):
