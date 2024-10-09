@@ -627,7 +627,7 @@ def pretrain_backbone(graph_model, i3d_online, moco, src_data_loader, tgt_data_l
                         'best_loss':best_loss,
                         'best_itrn':best_itrn
                         },checkpoint_path_current)
-            print("save current warmstart checkpoint to: {}".format(os.path.join(params.model_root, checkpoint_path_current)))
+            print("save current pretrain checkpoint to: {}".format(os.path.join(params.model_root, checkpoint_path_current)))
 
             print('best_loss: ', best_loss/params.eval_in_steps, ' ( in itrn:', best_itrn, ')...')
             graph_model.train()

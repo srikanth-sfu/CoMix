@@ -63,11 +63,11 @@ class MoCo(nn.Module, TrainStepMixin):
 
     def forward(self, q, k):
 
-        q = nn.functional.normalize(q, dim=1)
+        # q = nn.functional.normalize(q, dim=1)
 
-        # compute key features
-        with torch.no_grad():
-            k = nn.functional.normalize(k, dim=1)
+        # # compute key features
+        # with torch.no_grad():
+        #     k = nn.functional.normalize(k, dim=1)
 
 
         # compute logits
