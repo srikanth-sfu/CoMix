@@ -158,6 +158,7 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
 
     if not os.path.exists(params.model_root):
         os.makedirs(params.model_root)
+    os.makedirs(params.checkpoint_path_pretrain, exist_ok=True)
 
     if params.warmstart_models=='True': #changes needed for i3d online version
         if params.warmstart_graph=='None' or params.warmstart_i3d=='None':
