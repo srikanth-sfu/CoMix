@@ -196,7 +196,7 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
             else:
                 start_iter_pretrain, epoch_number_pretrain, checkpoint_pretrain = 0, 0, None
                 os.makedirs(os.path.dirname(checkpoint_path_pretrain), exist_ok=True)
-            graph_model, i3d_online = pretrain_backbone(graph_model, i3d_online, moco, src_data_loader, tgt_data_loader, data_loader_eval, params.num_iter_warmstart, start_iter_pretrain, epoch_number_pretrain, checkpoint_pretrain)            
+            graph_model, i3d_online = pretrain_backbone(graph_model, i3d_online, moco, src_data_loader, tgt_data_loader, data_loader_eval, params.num_iter_warmstart, start_iter_pretrain, epoch_number_pretrain, checkpoint_pretrain, tubelet_transform)            
             print('Pretrained successfully...')
         else:
             print('Loading pretrained model...')
@@ -506,7 +506,7 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
 
     return graph_model
 
-def pretrain_backbone(graph_model, i3d_online, moco, src_data_loader, tgt_data_loader=None, data_loader_eval=None, num_iterations=10000, start_iter=0, epoch_number=0, checkpoint=None):
+def pretrain_backbone(graph_model, i3d_online, moco, src_data_loader, tgt_data_loader=None, data_loader_eval=None, num_iterations=10000, start_iter=0, epoch_number=0, checkpoint=None,tubelet_transform=None):
     # Trainer function
     
     optimizer = optim.SGD([{"params": i3d_online.parameters(), "lr": params.learning_rate_ws * 0.1}],
