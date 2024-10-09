@@ -526,6 +526,7 @@ def pretrain_backbone(graph_model, i3d_online, moco, src_data_loader, tgt_data_l
         best_itrn = 0
 
     len_source_data_loader = len(src_data_loader) - 1 
+    len_target_data_loader = len(tgt_data_loader) - 1
 
     print_line()
     print('len_source_data_loader = '+ str(len_source_data_loader))
@@ -537,12 +538,6 @@ def pretrain_backbone(graph_model, i3d_online, moco, src_data_loader, tgt_data_l
     print_line()
     print_line()
     print_line()
-
-    start_time = time.process_time()
-    running_lr = params.learning_rate
-
-    if not os.path.exists(params.model_root):
-        os.makedirs(params.model_root)
 
     total_loss = 0.
 
@@ -561,7 +556,8 @@ def pretrain_backbone(graph_model, i3d_online, moco, src_data_loader, tgt_data_l
         if itrn % len_target_data_loader == 0:            
             iter_target = iter(tgt_data_loader)
 
-        SRC, labels = iter_source.next()
+        SRC, _ = iter_source.next()
+        TGT, _ = iter_target.next()
         feat_src_video = SRC[2]
         feat_tgt_video = TGT[2]
 
@@ -609,7 +605,7 @@ def pretrain_backbone(graph_model, i3d_online, moco, src_data_loader, tgt_data_l
             print_line()
         if ((itrn + 1) % params.eval_in_steps == 0):
             if(best_loss > total_loss):
-                best_accuracy_yet = avg_acc_val
+                best_loss = total_loss
                 best_model_wts = copy.deepcopy(graph_model.state_dict())
                 best_i3d_model_wts = copy.deepcopy(i3d_online.state_dict())
 
