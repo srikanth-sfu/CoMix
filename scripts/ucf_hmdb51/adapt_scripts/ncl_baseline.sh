@@ -2,14 +2,14 @@
 # ---------------------------------------------------------------------
 # SLURM script for job resubmission on our clusters. 
 # ---------------------------------------------------------------------
-#SBATCH --job-name=notransform
+#SBATCH --job-name=pretrain_adapt
 #SBATCH --account=rrg-mpederso
 #SBATCH --mem-per-cpu=64G
 #SBATCH --nodes=1
 #SBATCH --gres=gpu:v100l:4
 #SBATCH --time=0-03:00
-#SBATCH -o /home/smuralid/error/tubelets/comix-ncl_bgmix_baseline_notransform/ucf_hmdb/slurm-%j.out  # Write the log on scratch
-#SBATCH -e /home/smuralid/error/tubelets/comix-ncl_bgmix_baseline_notransform/ucf_hmdb/slurm-%j.err
+#SBATCH -o /home/smuralid/error/tubelets/comix-ncl_bgmix_pretrain_adapt/ucf_hmdb/slurm-%j.out  # Write the log on scratch
+#SBATCH -e /home/smuralid/error/tubelets/comix-ncl_bgmix_pretrain_adapt/ucf_hmdb/slurm-%j.err
 
 eval "$(conda shell.bash hook)"
 source activate focal
@@ -26,7 +26,7 @@ git checkout tubelet_contrast_comix_no_transformation
 echo "------------------------------"
 timeout 170m python main.py --manual_seed 1 --auto_resume True --dataset_name UCF-HMDB \
  --src_dataset UCF --tgt_dataset HMDB --batch_size 7 \
- --model_root /scratch/smuralid/checkpoints/da/ucf_hmdb/ncl_comix_baseline_video_ncl_notransform/ \
+ --model_root /scratch/smuralid/checkpoints/da/ucf_hmdb/ncl_comix_baseline_video_pretrain_adapt/ \
  --save_in_steps 500 --num_segments 0 --log_in_steps 50 --eval_in_steps 50 --pseudo_threshold 0.7 \
  --warmstart_models True --num_iter_warmstart 4000 --num_iter_adapt 10000 --learning_rate 0.01 --learning_rate_ws 0.01 \
  --lambda_bgm 0.1 --lambda_tpl 0.01 --base_dir $SLURM_TMPDIR/ucf_hmdb/ \

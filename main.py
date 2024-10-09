@@ -111,7 +111,7 @@ if __name__ == '__main__':
                     size_velocity=0.0001,
                     label_prob=1.0,
                     motion_type='gaussian',
-                    patch_transformation='none',
+                    patch_transformation='rotation',
                 )
             ]
     else:
