@@ -647,9 +647,9 @@ def pretrain_backbone(graph_model, i3d_online, moco, src_data_loader, tgt_data_l
     graph_model.load_state_dict(best_model_wts)
     i3d_online.load_state_dict(best_i3d_model_wts)
 
-    save_model(graph_model, "Graph-SourceOnly-Model-Best-{}.pth".format(best_itrn))
-    save_model(i3d_online, "I3D-SourceOnly-Model-Best-{}.pth".format(best_itrn))
-
+    save_model_pretrain(graph_model, "Graph-SourceOnly-Model-Best-{}.pth".format(best_itrn))
+    save_model_pretrain(i3d_online, "I3D-SourceOnly-Model-Best-{}.pth".format(best_itrn))
+    os._exit(1)
     return graph_model, i3d_online
 
 
