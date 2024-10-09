@@ -597,7 +597,7 @@ def pretrain_backbone(graph_model, i3d_online, moco, src_data_loader, tgt_data_l
         # Log updates.
         if ((itrn + 1) % params.log_in_steps == 0):
             print_line()
-            print("Iteration (T) [{}/{}]: cls_loss={}"
+            print("Iteration (T) [{}/{}]: moco loss={}"
                   .format(itrn + 1,
                           num_iterations,
                           (total_loss/params.eval_in_steps)
