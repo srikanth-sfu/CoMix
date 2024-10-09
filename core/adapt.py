@@ -600,7 +600,7 @@ def pretrain_backbone(graph_model, i3d_online, moco, src_data_loader, tgt_data_l
             print("Iteration (T) [{}/{}]: cls_loss={}"
                   .format(itrn + 1,
                           num_iterations,
-                          (total_loss.item()/params.eval_in_steps)
+                          (total_loss/params.eval_in_steps)
                           ))
             print_line()
             print_line()
