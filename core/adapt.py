@@ -615,25 +615,23 @@ def pretrain_backbone(graph_model, i3d_online, moco, src_data_loader, tgt_data_l
 
                 best_itrn = itrn + 1
                 
-                checkpoint_path_current = os.path.join(params.checkpoint_path_pretrain, "Current-Checkpoint.pt")
-                torch.save({
-                            'iter':itrn+1,
-                            'epoch_number':epoch_number,
-                            'graph':graph_model.state_dict(),
-                            'i3d':i3d_online.state_dict(),
-                            'optimizer':optimizer.state_dict(),
-                            'scheduler':scheduler.state_dict(),
-                            'best_loss':best_loss,
-                            'best_itrn':best_itrn
-                            },checkpoint_path_current)
-                print("save current warmstart checkpoint to: {}".format(os.path.join(params.model_root, checkpoint_path_current)))
+            checkpoint_path_current = os.path.join(params.checkpoint_path_pretrain, "Current-Checkpoint.pt")
+            torch.save({
+                        'iter':itrn+1,
+                        'epoch_number':epoch_number,
+                        'graph':graph_model.state_dict(),
+                        'i3d':i3d_online.state_dict(),
+                        'optimizer':optimizer.state_dict(),
+                        'scheduler':scheduler.state_dict(),
+                        'best_loss':best_loss,
+                        'best_itrn':best_itrn
+                        },checkpoint_path_current)
+            print("save current warmstart checkpoint to: {}".format(os.path.join(params.model_root, checkpoint_path_current)))
 
-                print('best_loss: ', best_loss/params.eval_in_steps, ' ( in itrn:', best_itrn, ')...')
-                graph_model.train()
-                i3d_online.train()
-                print_line()
-
-                end_time_eval = time.process_time()
+            print('best_loss: ', best_loss/params.eval_in_steps, ' ( in itrn:', best_itrn, ')...')
+            graph_model.train()
+            i3d_online.train()
+            print_line()
 
             total_loss = 0.
 
