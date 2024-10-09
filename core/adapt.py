@@ -193,6 +193,7 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
                 epoch_number_pretrain = checkpoint_pretrain["epoch_number"]
                 graph_model.load_state_dict(checkpoint_pretrain["graph"])
                 i3d_online.load_state_dict(checkpoint_pretrain["i3d"])
+                moco.load_state_dict(checkpoint_pretrain["moco"])
                 print("Resuming pretraining from itrn: ", start_iter_pretrain) 
             else:
                 start_iter_pretrain, epoch_number_pretrain, checkpoint_pretrain = 0, 0, None
@@ -482,6 +483,7 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
                         'i3d':i3d_online.state_dict(),
                         'optimizer':optimizer.state_dict(),
                         'scheduler':scheduler.state_dict(),
+                        'moco': moco.state_dict(),
                         'best_accuracy_yet':best_accuracy_yet,
                         'best_itrn':best_itrn,
                         },checkpoint_path_current)
