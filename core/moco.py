@@ -33,7 +33,7 @@ class MoCo(nn.Module, TrainStepMixin):
 
     def __init__(self,
                  out_channels: int,
-                 queue_size: int = 65532,
+                 queue_size: int = 65536,
                  momentum: float = 0.999,
                  temperature: float = 0.07):
         super(MoCo, self).__init__()
@@ -49,6 +49,7 @@ class MoCo(nn.Module, TrainStepMixin):
     @torch.no_grad()
     def _dequeue_and_enqueue(self, keys):
         # gather keys before updating queue
+        keys = concat_all_gather(keys)
         batch_size = keys.shape[0]
 
         ptr = int(self.queue_ptr)
