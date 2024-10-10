@@ -50,6 +50,7 @@ class MoCo(nn.Module, TrainStepMixin):
     def _dequeue_and_enqueue(self, keys):
         # gather keys before updating queue
         batch_size = keys.shape[0]
+        print(batch_size)
 
         ptr = int(self.queue_ptr)
         assert self.K % batch_size == 0  # for simplicity
