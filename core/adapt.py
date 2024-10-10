@@ -483,7 +483,6 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
                         'i3d':i3d_online.state_dict(),
                         'optimizer':optimizer.state_dict(),
                         'scheduler':scheduler.state_dict(),
-                        'moco': moco.state_dict(),
                         'best_accuracy_yet':best_accuracy_yet,
                         'best_itrn':best_itrn,
                         },checkpoint_path_current)
@@ -627,6 +626,7 @@ def pretrain_backbone(graph_model, i3d_online, moco, src_data_loader, tgt_data_l
                         'optimizer':optimizer.state_dict(),
                         'scheduler':scheduler.state_dict(),
                         'best_loss':best_loss,
+                        'moco': moco.state_dict(),
                         'best_itrn':best_itrn
                         },checkpoint_path_current)
             print("save current pretrain checkpoint to: {}".format(os.path.join(params.model_root, checkpoint_path_current)))
