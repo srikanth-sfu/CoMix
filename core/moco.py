@@ -89,7 +89,7 @@ class MoCo(nn.Module, TrainStepMixin):
             self._momentum_update_key_encoder(backbone=backbone)
             i3d_tgt_tubelet = self.key_encoder(k_in)
             i3d_tgt_tubelet = i3d_tgt_tubelet.squeeze(3).squeeze(3).squeeze(2)
-            k = self.key_fc(k)
+            k = self.key_fc(i3d_tgt_tubelet)
             k = nn.functional.normalize(k, dim=1)
 
 
