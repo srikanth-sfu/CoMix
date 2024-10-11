@@ -590,6 +590,11 @@ def pretrain_backbone(graph_model, i3d_online, moco, src_data_loader, tgt_data_l
                           ))
             print_line()
             print_line()
+        
+        i3d_online.eval()
+        graph_model.eval()
+        moco.eval()
+
         if ((itrn + 1) % params.eval_in_steps == 0):
             if(best_loss > total_loss):
                 best_loss = total_loss
@@ -618,6 +623,7 @@ def pretrain_backbone(graph_model, i3d_online, moco, src_data_loader, tgt_data_l
             print('best_loss: ', best_loss/params.eval_in_steps, ' ( in itrn:', best_itrn, ')...')
             graph_model.train()
             i3d_online.train()
+            moco.train()
             print_line()
 
             total_loss = 0.
