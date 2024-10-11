@@ -48,8 +48,8 @@ class MoCo(nn.Module, TrainStepMixin):
 
         self.register_buffer("queue_ptr", torch.zeros(1, dtype=torch.long))
         self.key_encoder = copy.deepcopy(i3d_online)
-        self.fc = nn.Linear(1024,128)
-        self.key_fc = nn.Linear(1024,28)
+        self.fc = nn.Linear(out_channels,128)
+        self.key_fc = nn.Linear(out_channels,128)
     
     @torch.no_grad()
     def _momentum_update_key_encoder(self, backbone):

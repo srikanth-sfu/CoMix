@@ -104,13 +104,14 @@ def transform_tubelet(vid1, vid2, fn):
 def train_comix(graph_model, src_data_loader, tgt_data_loader=None, data_loader_eval=None, tubelet_transform=None, num_iterations=10000):
     # Trainer function
     
-    graph_model.train()
-    graph_model = nn.DataParallel(graph_model)
-
     i3d_online = InceptionI3d(400, in_channels=3)
     i3d_online.load_state_dict(torch.load("./models/rgb_imagenet.pt"))
 
     moco = MoCo(i3d_online=i3d_online, out_channels=graph_model.nfeat).cuda()
+    
+    graph_model.train()
+    graph_model = nn.DataParallel(graph_model)
+
     
     i3d_online.train()
     i3d_online.cuda()
