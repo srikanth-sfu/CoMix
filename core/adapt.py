@@ -107,7 +107,10 @@ def train_comix(graph_model, src_data_loader, tgt_data_loader=None, data_loader_
     i3d_online = InceptionI3d(400, in_channels=3)
     i3d_online.load_state_dict(torch.load("./models/rgb_imagenet.pt"))
 
-    moco = MoCo(i3d_online=i3d_online, in_channels=graph_model.nfeat).cuda()
+    if params.pretrain_graph == "None" or params.pretrain_i3d == "None":
+        moco = MoCo(i3d_online=i3d_online, in_channels=graph_model.nfeat).cuda()
+        moco.train()
+        moco = nn.DataParallel(moco)
 
     graph_model.train()
     graph_model = nn.DataParallel(graph_model)
@@ -116,9 +119,6 @@ def train_comix(graph_model, src_data_loader, tgt_data_loader=None, data_loader_
     i3d_online.train()
     i3d_online.cuda()
     i3d_online = nn.DataParallel(i3d_online)
-
-    moco.train()
-    moco = nn.DataParallel(moco)
 
     random.seed(params.manual_seed)
 
