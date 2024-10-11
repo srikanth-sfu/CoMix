@@ -21,7 +21,7 @@ import random
 
 import warnings
 warnings.filterwarnings("ignore")
-from . import MoCo 
+from core.moco import MoCo 
 
 
 
