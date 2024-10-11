@@ -34,7 +34,7 @@ class MoCo(nn.Module, TrainStepMixin):
 
     def __init__(self,
                  i3d_online,
-                 out_channels: int,
+                 in_channels: int,
                  queue_size: int = 1024,
                  momentum: float = 0.999,
                  temperature: float = 0.07):
@@ -43,13 +43,13 @@ class MoCo(nn.Module, TrainStepMixin):
         self.m = momentum
         self.T = temperature
 
-        self.register_buffer("queue", torch.randn(out_channels, queue_size))
+        self.register_buffer("queue", torch.randn(128, queue_size))
         self.queue = nn.functional.normalize(self.queue, dim=0)
 
         self.register_buffer("queue_ptr", torch.zeros(1, dtype=torch.long))
         self.key_encoder = copy.deepcopy(i3d_online)
-        self.fc = nn.Linear(out_channels,128)
-        self.key_fc = nn.Linear(out_channels,128)
+        self.fc = nn.Linear(in_channels,128)
+        self.key_fc = nn.Linear(in_channels,128)
     
     @torch.no_grad()
     def _momentum_update_key_encoder(self, backbone):
