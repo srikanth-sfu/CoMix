@@ -569,7 +569,7 @@ def pretrain_backbone(graph_model, i3d_online, moco, src_data_loader, tgt_data_l
         i3d_src_tubelet = i3d_src_tubelet.squeeze(3).squeeze(3).squeeze(2)
 
         moco_loss = moco.forward(i3d_src_tubelet, tgt_tubelet, i3d_online)["nce_loss"].mean()        
-        loss = moco_loss * 0.1
+        loss = moco_loss
         
         loss.backward()
      
