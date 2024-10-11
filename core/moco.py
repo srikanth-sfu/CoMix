@@ -82,7 +82,7 @@ class MoCo(nn.Module, TrainStepMixin):
     def forward(self, q, k_in, backbone):
 
         q = self.fc(q)
-        q = nn.functional.normalize(q, dim=1)
+        # q = nn.functional.normalize(q, dim=1)
 
         # # compute key features
         with torch.no_grad():
@@ -90,7 +90,7 @@ class MoCo(nn.Module, TrainStepMixin):
             i3d_tgt_tubelet = self.key_encoder(k_in)
             i3d_tgt_tubelet = i3d_tgt_tubelet.squeeze(3).squeeze(3).squeeze(2)
             k = self.key_fc(i3d_tgt_tubelet)
-            k = nn.functional.normalize(k, dim=1)
+            # k = nn.functional.normalize(k, dim=1)
 
 
         # compute logits
