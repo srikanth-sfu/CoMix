@@ -501,7 +501,8 @@ def train_comix(graph_model, src_data_loader, tgt_data_loader=None, data_loader_
 def pretrain_backbone(graph_model, i3d_online, moco, src_data_loader, tgt_data_loader=None, data_loader_eval=None, num_iterations=10000, start_iter=0, epoch_number=0, checkpoint=None,tubelet_transform=None):
     # Trainer function
     
-    optimizer = optim.SGD([{"params": i3d_online.parameters(), "lr": params.learning_rate_ws * 0.1}],
+    optimizer = optim.SGD([{"params": i3d_online.parameters(), "lr": params.learning_rate_ws * 0.1},
+                           {'params':moco.parameters(), "lr": params.learning_rate_ws}],
                             lr=params.learning_rate,
                             weight_decay=0.0000001,
                             momentum=params.momentum )
