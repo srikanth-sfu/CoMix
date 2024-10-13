@@ -502,7 +502,7 @@ def pretrain_backbone(graph_model, i3d_online, moco, src_data_loader, tgt_data_l
     # Trainer function
     
     optimizer = optim.SGD([{"params": i3d_online.parameters(), "lr": params.learning_rate_ws * 0.1},
-                           {'params':moco.parameters(), "lr": params.learning_rate_ws}],
+                           {'params':moco.parameters(), "lr": params.learning_rate_ws*0.1}],
                             lr=params.learning_rate,
                             weight_decay=0.0000001,
                             momentum=params.momentum )
