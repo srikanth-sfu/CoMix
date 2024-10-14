@@ -279,8 +279,6 @@ def train_comix(graph_model, src_data_loader, tgt_data_loader=None, data_loader_
         tgt_mix_src_bg = tgt_mix_src_bg.reshape(bs*num_nodes, num_c, chunk_size, H, W)
         i3d_tgt_mix_src_bg = i3d_online(tgt_mix_src_bg)
         i3d_src_tubelet = i3d_online(src_tubelet)
-        with torch.no_grad():
-            i3d_tgt_tubelet = i3d_online(tgt_tubelet)
 
         #------Slow range---------------
         fastRange = np.arange(num_nodes)
@@ -305,9 +303,6 @@ def train_comix(graph_model, src_data_loader, tgt_data_loader=None, data_loader_
         i3d_tgt_mix_src_bg = i3d_tgt_mix_src_bg.reshape(bs, num_nodes, -1)
         i3d_tgt_mix_src_bg_slow = i3d_tgt_mix_src_bg[:,slowIds,:]
         i3d_src_tubelet = i3d_src_tubelet.squeeze(3).squeeze(3).squeeze(2)
-
-        with torch.no_grad():
-            i3d_tgt_tubelet = i3d_tgt_tubelet.squeeze(3).squeeze(3).squeeze(2)
        #---------------------------------
         preds_src = graph_model(i3d_feat_src)
         preds_src_slow = graph_model(i3d_feat_src_slow)
@@ -320,7 +315,7 @@ def train_comix(graph_model, src_data_loader, tgt_data_loader=None, data_loader_
         preds_tgt_mix = graph_model(i3d_tgt_mix_src_bg)
         preds_tgt_mix_slow = graph_model(i3d_tgt_mix_src_bg_slow)
 
-        moco_loss = moco.forward(i3d_src_tubelet, i3d_tgt_tubelet)["nce_loss"].mean()
+        moco_loss = moco.forward(i3d_src_tubelet, tgt_tubelet, i3d_online)["nce_loss"].mean()
         cls_loss = CrossEntropyLabelSmooth(num_classes=num_classes, epsilon=0.1, size_average=False)(preds_src, labels).mean()
         
 
@@ -400,6 +395,7 @@ def train_comix(graph_model, src_data_loader, tgt_data_loader=None, data_loader_
             tot_len = 0.0
             graph_model.eval()
             i3d_online.eval()
+            moco.eval()
             for step_val, (feats_val, labels_val) in enumerate(data_loader_eval):
                 if step_val % 10 == 0:
                     print("\rEvaluating batch {}/{}".format(step_val, len(data_loader_eval)), end='', flush=True)
@@ -450,6 +446,7 @@ def train_comix(graph_model, src_data_loader, tgt_data_loader=None, data_loader_
                         'i3d':i3d_online.state_dict(),
                         'optimizer':optimizer.state_dict(),
                         'scheduler':scheduler.state_dict(),
+                        'moco': moco.state_dict(),
                         'best_accuracy_yet':best_accuracy_yet,
                         'best_itrn':best_itrn
                         },checkpoint_path_best)
@@ -462,6 +459,7 @@ def train_comix(graph_model, src_data_loader, tgt_data_loader=None, data_loader_
                         'i3d':i3d_online.state_dict(),
                         'optimizer':optimizer.state_dict(),
                         'scheduler':scheduler.state_dict(),
+                        'moco': moco.state_dict(),
                         'best_accuracy_yet':best_accuracy_yet,
                         'best_itrn':best_itrn,
                         },checkpoint_path_current)
@@ -469,6 +467,7 @@ def train_comix(graph_model, src_data_loader, tgt_data_loader=None, data_loader_
             print('best_acc_yet: ', best_accuracy_yet, ' ( in itrn:', best_itrn, ')...')
             graph_model.train()
             i3d_online.train()
+            moco.train()
             print_line()
 
             end_time_eval = time.process_time()
