@@ -2,6 +2,7 @@
 import torch
 import torch.nn as nn
 from .mixin import TrainStepMixin
+import copy
 
 class Flatten(nn.Module):
     def __init__(self):
@@ -32,8 +33,9 @@ class MoCo(nn.Module, TrainStepMixin):
     """
 
     def __init__(self,
-                 out_channels: int,
-                 queue_size: int = 65532,
+                 i3d_online,
+                 in_channels: int,
+                 queue_size: int = 384,
                  momentum: float = 0.999,
                  temperature: float = 0.07):
         super(MoCo, self).__init__()
@@ -41,14 +43,30 @@ class MoCo(nn.Module, TrainStepMixin):
         self.m = momentum
         self.T = temperature
 
-        self.register_buffer("queue", torch.randn(out_channels, queue_size))
+        self.register_buffer("queue", torch.randn(128, queue_size))
         self.queue = nn.functional.normalize(self.queue, dim=0)
 
         self.register_buffer("queue_ptr", torch.zeros(1, dtype=torch.long))
+        self.key_encoder = copy.deepcopy(i3d_online)
+        self.fc = nn.Linear(in_channels,128)
+        self.key_fc = nn.Linear(in_channels,128)
+    
+    @torch.no_grad()
+    def _momentum_update_key_encoder(self, backbone):
+        """
+        Momentum update of the key encoder
+        """
+        for param_q, param_k in zip(backbone.parameters(),
+                                    self.key_encoder.parameters()):
+            param_k.data = param_k.data * self.m + param_q.data * (1. - self.m)
+        for param_q, param_k in zip(self.fc.parameters(),
+                                    self.key_fc.parameters()):
+            param_k.data = param_k.data * self.m + param_q.data * (1. - self.m)
 
     @torch.no_grad()
     def _dequeue_and_enqueue(self, keys):
         # gather keys before updating queue
+        # keys = concat_all_gather(keys)
         batch_size = keys.shape[0]
 
         ptr = int(self.queue_ptr)
@@ -61,12 +79,17 @@ class MoCo(nn.Module, TrainStepMixin):
         self.queue_ptr[0] = ptr
 
 
-    def forward(self, q, k):
+    def forward(self, q, k_in, backbone):
 
+        q = self.fc(q)
         q = nn.functional.normalize(q, dim=1)
 
-        # compute key features
+        # # compute key features
         with torch.no_grad():
+            self._momentum_update_key_encoder(backbone=backbone)
+            i3d_tgt_tubelet = self.key_encoder(k_in)
+            i3d_tgt_tubelet = i3d_tgt_tubelet.squeeze(3).squeeze(3).squeeze(2)
+            k = self.key_fc(i3d_tgt_tubelet)
             k = nn.functional.normalize(k, dim=1)
 
 

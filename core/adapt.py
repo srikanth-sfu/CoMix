@@ -122,7 +122,8 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
     simclr_loss_criterion = SupConLoss(temperature=temperature)
 
     optimizer = optim.SGD([ {"params": i3d_online.parameters(), "lr": params.learning_rate * 0.1},
-                            {"params": graph_model.parameters(), "lr": params.learning_rate}],
+                            {"params": graph_model.parameters(), "lr": params.learning_rate},
+                            {"params": moco.parameters(), "lr": params.learning_rate * 0.1}],
                             lr=params.learning_rate,
                             weight_decay=0.0000001,
                             momentum=params.momentum )
