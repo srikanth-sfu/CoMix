@@ -195,6 +195,7 @@ def train_comix(graph_model, src_data_loader, tgt_data_loader=None, data_loader_
             epoch_number = checkpoint['epoch_number']
             graph_model.load_state_dict(checkpoint['graph'])
             i3d_online.load_state_dict(checkpoint['i3d'])
+            moco.load_state_dict(checkpoint['moco'])
             optimizer.load_state_dict(checkpoint['optimizer'])
             scheduler.load_state_dict(checkpoint['scheduler'])
             print('Auto resuming from itrn: ', start_iter)
