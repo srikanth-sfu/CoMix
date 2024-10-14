@@ -99,7 +99,7 @@ def transform_tubelet(vid1, vid2, fn):
     return out_vid1, out_vid2
 
 #####...Train CoMix...#####
-def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_loader_eval=None, tubelet_transform=None, num_iterations=10000):
+def train_comix(graph_model, src_data_loader, tgt_data_loader=None, data_loader_eval=None, tubelet_transform=None, num_iterations=10000):
     # Trainer function
     
     graph_model.train()
@@ -107,7 +107,8 @@ def train_comix(graph_model, moco, src_data_loader, tgt_data_loader=None, data_l
 
     i3d_online = InceptionI3d(400, in_channels=3)
     i3d_online.load_state_dict(torch.load("./models/rgb_imagenet.pt"))
-    
+    moco = MoCo(i3d_online=i3d_online, in_channels=graph_model.nfeat).cuda()
+
     i3d_online.train()
     i3d_online.cuda()
     i3d_online = nn.DataParallel(i3d_online)
