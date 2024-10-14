@@ -13,6 +13,8 @@ import time
 import datetime
 import copy
 from torch.autograd import Function
+from core.moco import MoCo 
+
 
 from core.losses import SupConLoss 
 from i3d.pytorch_i3d import InceptionI3d
