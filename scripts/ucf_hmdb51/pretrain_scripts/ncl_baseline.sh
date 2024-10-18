@@ -25,7 +25,7 @@ cd CoMix
 git checkout tubelet_contrast_comix_pretrain_adapt_moco
 echo "------------------------------"
 CUDA_VISIBLE_DEVICES=0 timeout 170m python main.py --manual_seed 1 --auto_resume True --dataset_name UCF-HMDB \
- --src_dataset UCF --tgt_dataset HMDB --batch_size 16 --model_root /scratch/smuralid/checkpoints/da/ucf_hmdb/ncl_comix_baseline_video_pretrain_adapt_moen/ \
+ --src_dataset UCF --tgt_dataset HMDB --batch_size 32 --model_root /scratch/smuralid/checkpoints/da/ucf_hmdb/ncl_comix_baseline_video_pretrain_adapt_moen/ \
  --save_in_steps 500 --num_segments 0 --log_in_steps 50 --eval_in_steps 50 --pseudo_threshold 0.7 --warmstart_models True \
  --num_iter_warmstart 1500 --num_iter_adapt 10000 --learning_rate 0.01 --learning_rate_ws 0.01 --lambda_bgm 0.1 --lambda_tpl 0.01 \
  --base_dir $SLURM_TMPDIR/ucf_hmdb/ \
