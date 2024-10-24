@@ -6,7 +6,7 @@
 #SBATCH --account=rrg-mpederso
 #SBATCH --mem-per-cpu=64G
 #SBATCH --nodes=1
-#SBATCH --gres=gpu:v100l:4
+#SBATCH --gres=gpu:4
 #SBATCH --time=0-03:00
 #SBATCH -o /home/smuralid/error/tubelets/comix-ncl_bgmix_pretrain_moen/ucf_hmdb/slurm-%j.out  # Write the log on scratch
 #SBATCH -e /home/smuralid/error/tubelets/comix-ncl_bgmix_pretrain_moen/ucf_hmdb/slurm-%j.err
