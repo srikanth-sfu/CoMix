@@ -172,7 +172,11 @@ class VideoDataset_EpicKitchens(Dataset):
             print("Split range : ", splitRange)
             print("All range : ", allRange)
             raise Exception
-            
+
+        start_ind = random.randint(0, frames_tensor.shape[1]-(self.chunk_size**2))
+        frames_tensor_crop = frames_tensor[:, start_ind:start_ind+(self.chunk_size)**2:self.chunk_size]
+
+
         ind = [np.arange(start=i*self.frequency, stop=i*self.frequency + self.chunk_size, step=1) for i in fidx]    
         frames_tensor_chunks = torch.empty(self.num_nodes, frames_tensor.shape[0], self.chunk_size, frames_tensor.shape[2], frames_tensor.shape[3]) # [16, C, chunk_size, H, W]    
         for chunk_ind, i in zip(ind, range(self.num_nodes)) : 
@@ -181,7 +185,7 @@ class VideoDataset_EpicKitchens(Dataset):
         if self.is_test:
             bg_frames_tensor = 'None'
 
-        return [frames_tensor_chunks, bg_frames_tensor], label # List of tensors, label
+        return [frames_tensor_chunks, bg_frames_tensor, frames_tensor_crop], label # List of tensors, label
 class VideoDataset_Jester(Dataset):
 	'''
     Input : 
