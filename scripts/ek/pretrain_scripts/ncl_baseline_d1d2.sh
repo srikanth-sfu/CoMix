@@ -31,7 +31,10 @@ cd $SLURM_TMPDIR
 git clone git@github.com:srikanth-sfu/CoMix.git
 cd CoMix
 git checkout tubelet_contrast_comix_pretrain_adapt_moco
+bash scripts/preprocessing/unzip_ek.sh
+
 echo "------------------------------"
+
 CUDA_VISIBLE_DEVICES=0 timeout 163m python main.py --manual_seed 1 --auto_resume True  --dataset_name Epic-Kitchens \
  --src_dataset D1 --tgt_dataset D2 --batch_size 32 --model_root /project/def-mpederso/smuralid/checkpoints/da/ek/d1d2_ncl_comix_baseline_video_pretrain_adapt_moen/ \
  --save_in_steps 500 --num_segments 0 --log_in_steps 50 --eval_in_steps 50 --pseudo_threshold 0.7 --warmstart_models True \
