@@ -11,9 +11,11 @@
 #SBATCH -o /home/smuralid/error/tubelets/comix-ncl_bgmix_pretrain_moen/ek_d1d2/slurm-%j.out  # Write the log on scratch
 #SBATCH -e /home/smuralid/error/tubelets/comix-ncl_bgmix_pretrain_moen/ek_d1d2/slurm-%j.err
 
-eval "$(conda shell.bash hook)"
-source activate focal
 cd $SLURM_TMPDIR
+cp /project/def-mpederso/smuralid/envs/focal.zip .
+unzip -qq focal.zip
+module load StdEnv/2020 python/3.8.10
+source focal/bin/activate
 mkdir epic_kitchens
 # D1: P08, D2: P01
 cp /project/def-mpederso/smuralid/datasets/epic_kitchens/epic_kitchens_d1.zip $SLURM_TMPDIR/epic_kitchens
