@@ -3,6 +3,7 @@ import lmdb
 from PIL import Image
 import numpy as np
 from tqdm import tqdm
+import glob
 
 def folder_to_lmdb(image_folder, lmdb_path, resize=None):
     """
@@ -45,12 +46,14 @@ def folder_to_lmdb(image_folder, lmdb_path, resize=None):
 
     print(f"LMDB dataset created at {lmdb_path}")
 
+def proc(folder):
+    lmdb_path = os.path.join(lmdb_root, os.path.join(lmdb_root, os.path.basename(folder)))
+    folder_to_lmdb(folder, lmdb_path, resize=(224, 224))
 # Example usage
 input_folders = os.path.join(os.getenv("SLURM_TMPDIR"), "epic_kitchens/frames_orig/*")
 input_folders = glob.glob(f"{input_folders}")
 lmdb_root = os.path.join(os.getenv("SLURM_TMPDIR"), "epic_kitchens/frames_lmdb/")
-os.makedirs(lmdb_path, exist_ok=True)
-for folder in input_folders:
-    lmdb_path = os.path.join(lmdb_root, os.path.join(lmdb_root, os.path.basename(folder)))
-    folder_to_lmdb(image_folder, lmdb_path, resize=(224, 224))
-
+os.makedirs(lmdb_root, exist_ok=True)
+from multiprocessing import Pool
+pool = Pool(24)
+pool.map(proc, input_folders)
