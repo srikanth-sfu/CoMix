@@ -50,14 +50,31 @@ def folder_to_lmdb(image_folder, lmdb_path, resize=None):
 
     print(f"LMDB dataset created at {lmdb_path}")
 
+def get_folder_size(folder_path):
+    total_size = 0
+    for dirpath, dirnames, filenames in os.walk(folder_path):
+        for filename in filenames:
+            filepath = os.path.join(dirpath, filename)
+            if os.path.isfile(filepath):  # Ensure it's a file
+                total_size += os.path.getsize(filepath)
+    return total_size
+
 def proc(folder):
     lmdb_path = os.path.join(lmdb_root, os.path.join(lmdb_root, os.path.basename(folder)))
+    folder_size = get_folder_size(lmdb_path)
+    folder_size = (folder_size/(1024*1024))
+    if folder_size > 1:
+        return
+    print('processing')
     folder_to_lmdb(folder, lmdb_path, resize=(224, 224))
+    
 # Example usage
 input_folders = os.path.join(os.getenv("SLURM_TMPDIR"), "epic_kitchens/frames_orig/*")
 input_folders = glob.glob(f"{input_folders}")
 lmdb_root = os.path.join(os.getenv("SLURM_TMPDIR"), "epic_kitchens/frames_lmdb/")
 os.makedirs(lmdb_root, exist_ok=True)
 from multiprocessing import Pool
-pool = Pool(36)
-pool.map(proc, input_folders)
+pool = Pool(1)
+import random
+random.shuffle(input_folders)
+pool.map(proc, input_folders[:4])
