@@ -34,7 +34,11 @@ def folder_to_lmdb(image_folder, lmdb_path, resize=None):
                 img = np.array(img)
             
             # Serialize data and store in LMDB
-            key = f"{idx:08d}".encode("ascii")
+            # key = f"{idx:08d}".encode("ascii")
+            tmpdir = os.getenv("SLURM_TMPDIR")
+            if not tmpdir.endswith('/'):
+                tmpdir += "/"
+            key = image_path.replace(tmpdir, "").replace("frames_orig", "frames").encode("ascii")
             value = img.tobytes()
             meta = {
                 "shape": img.shape,
@@ -55,5 +59,5 @@ input_folders = glob.glob(f"{input_folders}")
 lmdb_root = os.path.join(os.getenv("SLURM_TMPDIR"), "epic_kitchens/frames_lmdb/")
 os.makedirs(lmdb_root, exist_ok=True)
 from multiprocessing import Pool
-pool = Pool(24)
+pool = Pool(36)
 pool.map(proc, input_folders)
