@@ -59,23 +59,20 @@ def load_frame(frame_file, resize=False, lmdb_obj=None):
         if lmdb_obj is None:
             data = Image.open(frame_file)
         else:
-            try:
-                data = lmdb_load(lmdb_obj, frame_file)
-                time_taken += (time.time()-start)
-            except:
-                pass
+            data = lmdb_load(lmdb_obj, frame_file)
+            time_taken += (time.time()-start)
     else:
         data = Image.fromarray(frame_file)
 
 
-#    data = np.array(data)
-#    data = data.astype(float)
-#    data = (data * 2 / 255) - 1
+    data = np.array(data)
+    data = data.astype(float)
+    data = (data * 2 / 255) - 1
+
+    assert(data.max()<=1.0)
+    assert(data.min()>=-1.0)
 #
-#    assert(data.max()<=1.0)
-#    assert(data.min()>=-1.0)
-#
-    return np.zeros((224,224,3)), time_taken
+    return data, time_taken
 
 def load_rgb_batch(frames_dir, rgb_files, frame_indices, resize=False, lmdb_loading=False):
     if resize:
@@ -89,7 +86,6 @@ def load_rgb_batch(frames_dir, rgb_files, frame_indices, resize=False, lmdb_load
 
         lmdb_file = frames_dir.replace("frames", "frames_lmdb").replace("/train", "").replace("/test", "")
         lmdb_obj = lmdb.open(lmdb_file,readonly=True,lock=False)
-        print('lmdb load took %.02f s'%(time.time()-t))
     total = 0
     for i in range(frame_indices.shape[0]):
             #print("Loading frame : ", os.path.join(frames_dir,rgb_files[frame_indices[i]]))
@@ -100,8 +96,6 @@ def load_rgb_batch(frames_dir, rgb_files, frame_indices, resize=False, lmdb_load
             im_out, tx = load_frame(frame_file, resize, lmdb_obj)
             total += tx
             batch_data[i,:,:,:] = im_out
-    if total > 0:
-        print("took %.02f s"%(total))
     return batch_data
 
 class VideoDataset_EpicKitchens(Dataset):
@@ -163,7 +157,6 @@ class VideoDataset_EpicKitchens(Dataset):
             raise Exception
         t = time.time()
         frames_tensor = load_rgb_batch(path, rgb_files, frame_indices, resize=True, lmdb_loading=True)
-        print("sample time %.02f s"%(time.time()-t))
         if not self.is_test:
             path_fn = os.path.basename(path)
             if path_fn.startswith("P08"): 
@@ -389,7 +382,7 @@ if __name__ == '__main__':
     tmp = os.getenv('SLURM_TMPDIR')
     root = os.path.join(tmp,'epic_kitchens')
     source_dataset = VideoDataset_EpicKitchens(csv_file='./video_splits/D1_train.pkl', transform=None, base_dir=root)
-    source_dataloader = DataLoader(source_dataset, batch_size=8, shuffle=True, num_workers=0)
+    source_dataloader = DataLoader(source_dataset, batch_size=8, shuffle=True, num_workers=2)
     iter_source = iter(source_dataloader)
     for i in range(1,11):
         t = time.time()
