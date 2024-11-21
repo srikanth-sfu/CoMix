@@ -64,6 +64,8 @@ def load_frame(frame_file, resize=False, lmdb_obj=None):
     else:
         data = Image.fromarray(frame_file)
 
+    if resize:
+        data = data.resize((224, 224), Image.ANTIALIAS)
 
     data = np.array(data)
     data = data.astype(float)
