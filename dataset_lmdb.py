@@ -61,11 +61,10 @@ def load_frame(frame_file, resize=False, lmdb_obj=None):
         else:
             data = lmdb_load(lmdb_obj, frame_file)
             time_taken += (time.time()-start)
+            data = Image.fromarray(data)
     else:
         data = Image.fromarray(frame_file)
 
-    if resize:
-        data = data.resize((224, 224), Image.ANTIALIAS)
 
     data = np.array(data)
     data = data.astype(float)
