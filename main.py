@@ -3,7 +3,7 @@ import params
 from core import train_comix
 from models import *
 from utils import *
-from dataset import *
+from dataset_lmdb import *
 import argparse
 import os
 from tubelets import build_transform
