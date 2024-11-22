@@ -150,9 +150,7 @@ class VideoDataset_EpicKitchens(Dataset):
         path = self.video_dir + self.video_id[idx]
         label = self.verb_class[idx] 
         rgb_files = self.file_lookup[path.replace(os.getenv("SLURM_TMPDIR"), "").replace("/epic_kitchens/", "")]
-        print(path.replace(os.getenv("SLURM_TMPDIR"), "").replace("/epic_kitchens/", ""))
         rgb_files.sort()
-        print(len(rgb_files), type(self.file_lookup))
         rgb_files = rgb_files[self.start_frame[idx]:self.stop_frame[idx]]
         frame_indices = np.arange(len(rgb_files))
         num_frames = len(rgb_files)
