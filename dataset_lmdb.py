@@ -140,7 +140,7 @@ class VideoDataset_EpicKitchens(Dataset):
             assert(self.is_test == True)
             self.video_dir += "test/"
         self.base_dir = base_dir
-
+        self.file_lookup = os.path.join(os.getenv("SLURM_TMPDIR"), "d1d2.pkl")
     def __len__(self):
         return len(self.uid)
     
@@ -148,7 +148,7 @@ class VideoDataset_EpicKitchens(Dataset):
     def __getitem__(self, idx) :
         path = self.video_dir + self.video_id[idx]
         label = self.verb_class[idx] 
-        rgb_files = [i for i in os.listdir(path)]
+        rgb_files = self.file_lookup[path.replace(os.getenv("SLURM_TMPDIR"), "")]
         rgb_files.sort()
         rgb_files = rgb_files[self.start_frame[idx]:self.stop_frame[idx]]
         frame_indices = np.arange(len(rgb_files))
