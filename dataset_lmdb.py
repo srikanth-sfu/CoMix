@@ -378,16 +378,16 @@ class VideoDataset_UCFHMDB(Dataset):
 
         return [frames_tensor_chunks, bg_frames_tensor, frames_tensor_crop], label # List of tensors, label
 
-# if __name__ == '__main__':
+if __name__ == '__main__':
 
-#     import os
-#     tmp = os.getenv('SLURM_TMPDIR')
-#     root = os.path.join(tmp,'epic_kitchens')
-#     source_dataset = VideoDataset_EpicKitchens(csv_file='./video_splits/D1_train.pkl', transform=None, base_dir=root)
-#     source_dataloader = DataLoader(source_dataset, batch_size=8, shuffle=True, num_workers=2)
-#     iter_source = iter(source_dataloader)
-#     for i in range(1,11):
-#         t = time.time()
-#         elem = iter_source.next()
-#         print(f"{i}th Iteration", time.time()-t)
+    import os
+    tmp = os.getenv('SLURM_TMPDIR')
+    root = os.path.join(tmp,'epic_kitchens')
+    source_dataset = VideoDataset_EpicKitchens(csv_file='./video_splits/D1_train.pkl', transform=None, base_dir=root)
+    source_dataloader = DataLoader(source_dataset, batch_size=8, shuffle=True, num_workers=2)
+    iter_source = iter(source_dataloader)
+    for i in range(1,11):
+        t = time.time()
+        elem = iter_source.next()
+        print(f"{i}th Iteration", time.time()-t)
         
