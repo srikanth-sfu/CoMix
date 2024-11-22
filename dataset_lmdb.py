@@ -17,6 +17,7 @@ import GPUtil
 import time
 import math
 import pickle
+pkl = pickle
 import random
 import lmdb
 
@@ -140,7 +141,7 @@ class VideoDataset_EpicKitchens(Dataset):
             assert(self.is_test == True)
             self.video_dir += "test/"
         self.base_dir = base_dir
-        self.file_lookup = os.path.join(os.getenv("SLURM_TMPDIR"), "d1d2.pkl")
+        self.file_lookup = pkl.load(open(os.path.join(os.getenv("SLURM_TMPDIR"), "d1d2.pkl"), "rb"))
     def __len__(self):
         return len(self.uid)
     
