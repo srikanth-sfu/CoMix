@@ -49,6 +49,6 @@ if [ $? -eq 124 ]; then
 else
   cd $SLURM_SUBMIT_DIR
   echo "Starting Adapt Script"
-  sbatch scripts/ek/pretrain_scripts/ncl_baseline_d1d2.sh
+  sbatch scripts/ek/adapt_scripts/ncl_baseline_d1d2.sh
   # Exit or perform any other necessary cleanup
 fi
