@@ -4,7 +4,7 @@
 # ---------------------------------------------------------------------
 #SBATCH --job-name=baseline_run
 #SBATCH --account=rrg-mpederso
-#SBATCH --mem-per-cpu=64G
+#SBATCH --mem-per-cpu=96G
 #SBATCH --nodes=1
 #SBATCH --gres=gpu:v100l:4
 #SBATCH --time=0-03:00
