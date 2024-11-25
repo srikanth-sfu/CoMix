@@ -31,7 +31,7 @@ git checkout jester_baseline_zip
 echo "------------------------------"
 cp /project/def-mpederso/smuralid/datasets/epic_kitchens/d1d2.pkl .
 
-timeout 150m python main.py --manual_seed 1 --dataset_name Epic-Kitchens --src_dataset D1 --tgt_dataset D2 \
+timeout 150m python main.py --manual_seed 1 --auto_resume True --dataset_name Epic-Kitchens --src_dataset D1 --tgt_dataset D2 \
  --batch_size 7 --model_root /project/def-mpederso/smuralid/checkpoints/da/epic_kitchens_d1d2/original_baseline/ \
  --save_in_steps 500  --num_segments 0 --log_in_steps 50 --eval_in_steps 50 --pseudo_threshold 0.7 --warmstart_models True \
  --num_iter_warmstart 4000 --num_iter_adapt 10000 --learning_rate 0.01 --learning_rate_ws 0.01 --lambda_bgm 0.01 \
